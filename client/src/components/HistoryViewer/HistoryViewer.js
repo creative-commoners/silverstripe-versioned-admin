@@ -1,8 +1,15 @@
+/* global window */
+
 import React, { Component, PropTypes } from 'react';
 import { compose } from 'redux';
-import historyStateRouter from 'components/HistoryViewer/HistoryViewerStateRouter';
-import HistoryViewerVersionList from 'components/HistoryViewer/HistoryViewerVersionList';
+import { connect } from 'react-redux';
+import historyStateRouter from 'containers/HistoryViewer/HistoryViewerStateRouter';
+import historyViewerConfig from 'containers/HistoryViewer/HistoryViewerConfig';
+import HistoryViewerVersionDetail from './HistoryViewerVersionDetail';
+import HistoryViewerVersionList from './HistoryViewerVersionList';
+import Loading from './Loading';
 import { versionType } from 'types/versionType';
+import { setCurrentVersion } from 'state/historyviewer/HistoryViewerActions';
 import Griddle from 'griddle-react';
 import i18n from 'i18n';
 
@@ -31,6 +38,36 @@ class HistoryViewer extends Component {
       ? versions.Versions.edges
       : [];
     return edges.map((version) => version.node);
+  }
+
+  /**
+   * Renders the detail form for a selected version
+   *
+   * @returns {HistoryViewerVersionDetail}
+   */
+  getVersionDetail() {
+    const {
+      currentVersion,
+      recordId,
+      recordClass,
+      handleSetCurrentVersion,
+      schemaUrl,
+    } = this.props;
+
+    // Insert variables into the schema URL via regex replacements
+    const schemaReplacements = {
+      ':id': recordId,
+      ':class': recordClass,
+      ':version': currentVersion,
+    };
+
+    const props = {
+      schemaUrl: schemaUrl.replace(/:id|:class|:version/g, (match) => schemaReplacements[match]),
+      handleSetCurrentVersion,
+      version: this.getVersions().filter((version) => version.Version === currentVersion)[0],
+    };
+
+    return <HistoryViewerVersionDetail {...props} />;
   }
 
   /**
@@ -113,23 +150,26 @@ class HistoryViewer extends Component {
   }
 
   render() {
-    const { loading } = this.props;
+    const { loading, currentVersion, handleSetCurrentVersion } = this.props;
 
     // Handle loading state
     if (loading) {
-      return (
-        <div className="flexbox-area-grow">
-          <div key="overlay" className="cms-content-loading-overlay ui-widget-overlay-light" />
-          <div key="spinner" className="cms-content-loading-spinner" />
-        </div>
-      );
+      return <Loading />;
     }
 
+    // Render the selected version details
+    if (currentVersion) {
+      return this.getVersionDetail();
+    }
+
+    // Render the version list
     return (
       <div className="history-viewer">
         <HistoryViewerVersionList
+          handleSetCurrentVersion={handleSetCurrentVersion}
           versions={this.getVersions()}
         />
+
         <div className="history-viewer__pagination">
           {this.renderPagination()}
         </div>
@@ -142,6 +182,7 @@ HistoryViewer.propTypes = {
   limit: PropTypes.number,
   offset: PropTypes.number,
   recordId: PropTypes.number.isRequired,
+  currentVersion: PropTypes.number,
   versions: PropTypes.shape({
     Versions: PropTypes.shape({
       pageInfo: PropTypes.shape({
@@ -153,10 +194,14 @@ HistoryViewer.propTypes = {
     }),
   }),
   page: PropTypes.number,
+  schemaUrl: PropTypes.string,
   actions: PropTypes.object,
+  handleSetCurrentVersion: PropTypes.func,
 };
 
 HistoryViewer.defaultProps = {
+  currentVersion: 0,
+  schemaUrl: '',
   versions: {
     Versions: {
       pageInfo: {
@@ -167,10 +212,26 @@ HistoryViewer.defaultProps = {
   },
 };
 
+
+function mapStateToProps(state) {
+  const historyViewerState = state.versionedAdmin.historyViewer;
+  return {
+    currentVersion: historyViewerState.currentVersion,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    handleSetCurrentVersion(id) {
+      dispatch(setCurrentVersion(id));
+    },
+  };
+}
+
 export { HistoryViewer as Component };
 
-const HistoryViewerProvider = compose(
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  historyViewerConfig,
   historyStateRouter
 )(HistoryViewer);
-
-export default HistoryViewerProvider;
