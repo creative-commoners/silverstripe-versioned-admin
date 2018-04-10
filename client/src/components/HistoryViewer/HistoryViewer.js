@@ -159,19 +159,25 @@ class HistoryViewer extends Component {
 
     // Render the selected version details
     if (currentVersion) {
-      return this.getVersionDetail();
+      return (
+        <div className="history-viewer fill-height">
+          {this.getVersionDetail()}
+        </div>
+      );
     }
 
     // Render the version list
     return (
-      <div className="history-viewer">
-        <HistoryViewerVersionList
-          handleSetCurrentVersion={handleSetCurrentVersion}
-          versions={this.getVersions()}
-        />
+      <div className="history-viewer fill-height">
+        <div className="panel panel--padded panel--scrollable">
+          <HistoryViewerVersionList
+            handleSetCurrentVersion={handleSetCurrentVersion}
+            versions={this.getVersions()}
+          />
 
-        <div className="history-viewer__pagination">
-          {this.renderPagination()}
+          <div className="history-viewer__pagination">
+            {this.renderPagination()}
+          </div>
         </div>
       </div>
     );
