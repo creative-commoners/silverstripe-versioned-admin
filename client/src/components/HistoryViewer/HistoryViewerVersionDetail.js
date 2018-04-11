@@ -73,8 +73,7 @@ class HistoryViewerVersionDetail extends Component {
         </div>
 
         <Preview
-          className="history-viewer__preview"
-          extraClass="" // removes default: fill-height
+          className="history-viewer__preview" // removes default: fill-height
           itemLinks={{
             preview: {
               Stage: {
@@ -83,7 +82,7 @@ class HistoryViewerVersionDetail extends Component {
               },
             },
           }}
-          itemId={2}
+          itemId={version.Version}
         />
 
         { loading ? <Loading /> : null }
