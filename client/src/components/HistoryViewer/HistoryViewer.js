@@ -51,6 +51,7 @@ class HistoryViewer extends Component {
       recordId,
       recordClass,
       handleSetCurrentVersion,
+      isPreviewable,
       schemaUrl,
     } = this.props;
 
@@ -64,6 +65,7 @@ class HistoryViewer extends Component {
     const props = {
       schemaUrl: schemaUrl.replace(/:id|:class|:version/g, (match) => schemaReplacements[match]),
       handleSetCurrentVersion,
+      isPreviewable,
       version: this.getVersions().filter((version) => version.Version === currentVersion)[0],
     };
 
@@ -150,7 +152,7 @@ class HistoryViewer extends Component {
   }
 
   render() {
-    const { loading, currentVersion, handleSetCurrentVersion } = this.props;
+    const { loading, currentVersion, handleSetCurrentVersion, isPreviewable } = this.props;
 
     // Handle loading state
     if (loading) {
@@ -169,7 +171,7 @@ class HistoryViewer extends Component {
     // Render the version list
     return (
       <div className="history-viewer fill-height">
-        <div className="panel panel--padded panel--scrollable">
+        <div className={isPreviewable ? 'panel panel--padded panel--scrollable' : ''}>
           <HistoryViewerVersionList
             handleSetCurrentVersion={handleSetCurrentVersion}
             versions={this.getVersions()}
@@ -189,6 +191,7 @@ HistoryViewer.propTypes = {
   offset: PropTypes.number,
   recordId: PropTypes.number.isRequired,
   currentVersion: PropTypes.number,
+  isPreviewable: PropTypes.bool,
   versions: PropTypes.shape({
     Versions: PropTypes.shape({
       pageInfo: PropTypes.shape({
@@ -207,6 +210,7 @@ HistoryViewer.propTypes = {
 
 HistoryViewer.defaultProps = {
   currentVersion: 0,
+  isPreviewable: false,
   schemaUrl: '',
   versions: {
     Versions: {
