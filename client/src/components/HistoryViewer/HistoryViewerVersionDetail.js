@@ -3,21 +3,10 @@
 import React, { Component } from 'react';
 import FormBuilderLoader from 'containers/FormBuilderLoader/FormBuilderLoader';
 import HistoryViewerVersionList from './HistoryViewerVersionList';
-import Loading from './Loading';
 import Preview from 'components/Preview/Preview';
 import { versionType } from 'types/versionType';
 
 class HistoryViewerVersionDetail extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleLoadingSuccess = this.handleLoadingSuccess.bind(this);
-
-    this.state = {
-      loading: true,
-    };
-  }
-
   componentWillMount() {
     this.toggleToolbarClass();
   }
@@ -71,19 +60,8 @@ class HistoryViewerVersionDetail extends Component {
     }
   }
 
-  /**
-   * When the form builder has finished loading the schema, change the state
-   * to remove the loading indicator
-   */
-  handleLoadingSuccess() {
-    this.setState({
-      loading: false
-    });
-  }
-
   render() {
     const { handleSetCurrentVersion, schemaUrl, version, isPreviewable } = this.props;
-    const { loading } = this.state;
 
     return (
       <div className="flexbox-area-grow fill-width">
@@ -100,15 +78,12 @@ class HistoryViewerVersionDetail extends Component {
               <FormBuilderLoader
                 identifier="HistoryViewer.VersionDetail"
                 schemaUrl={schemaUrl}
-                onLoadingSuccess={this.handleLoadingSuccess}
               />
             </div>
           </div>
         </div>
 
         {this.getPreview()}
-
-        { loading ? <Loading /> : null }
       </div>
     );
   }
