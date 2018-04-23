@@ -12,54 +12,60 @@ class HistoryViewerHeading extends React.Component {
   this.draftFilterToggled = this.draftFilterToggled.bind(this);
   this.state = {
     dropdownOpen: false,
+    checkboxProps: {
+      id: 'set',
+      title: '',
+      name: 'set',
+      value: [],
+      source: [
+        { value: 'draft', title: 'Show Unpublished' },
+        { value: 'compare', title: 'Compare 2 versions' },
+      ],
+    }
   };
   }
 
   toggle() {
-    this.setState({
-    dropdownOpen: !this.state.dropdownOpen
-    });
+    this.setState(prevState => ({
+      ...prevState,
+      dropdownOpen: !prevState.dropdownOpen
+    }));
   }
 
   draftFilterToggled(event, importantBits) {
-		const { id, value } = importantBits;
-		console.log('event', event, 'id', id, 'value', value);
+    const { value } = importantBits;
 
 // User chooses to show unpublished versions via checkbox
-		if (value.length && value[0] === 'draft') {
-      alert('do something');
-		}
-	}
+    if (value.length) {
+      // update checkboxProps value array
+      this.setState(prevState => ({
+        ...prevState,
+        checkboxProps: {
+          ...prevState.checkboxProps,
+          value
+        }
+      }));
+    }
+  }
 
-	render() {
-		const { CheckboxComponent } = this.props;
+  render() {
+    const { CheckboxComponent } = this.props;
 
-		const checkboxProps = {
-      id: 'set',
-      title: '',
-      name: 'set',
-      value: [''],
-      source: [
-	      { value: 'draft', title: 'Show unpublished' },
-        { value: 'compare', title: 'Compare 2 versions' }
-			],
-		};
-
-		return (
+    return (
       <tr>
         <th>#</th>
         <th>{i18n._t('HistoryViewer.Record', 'Record')}</th>
         <th className="history-viewer_author_and_toggle">
-					{i18n._t('HistoryViewer.Author', 'Author')}
-					<Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle} >
-            <DropdownToggle className="font-icon-sliders icon-only icon">
-			      </DropdownToggle>
-						<DropdownMenu right>
+          {i18n._t('HistoryViewer.Author', 'Author')}
+          <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle} >
+            <DropdownToggle className="font-icon-sliders icon-only icon" />
+            <DropdownMenu right>
               <DropdownItem>
                 <CheckboxComponent
-                  {...checkboxProps}
-                  onChange={this.draftFilterToggled} />
-							</DropdownItem>
+                  {...this.state.checkboxProps}
+                  onChange={this.draftFilterToggled}
+                />
+              </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </th>
@@ -72,7 +78,7 @@ class HistoryViewerHeading extends React.Component {
 
 HistoryViewerHeading.propTypes = {
   hasActions: React.PropTypes.bool,
-  CheckboxComponent: React.PropTypes.oneOfType([React.PropTypes.func, ])
+  CheckboxComponent: React.PropTypes.oneOfType([React.PropTypes.func])
 };
 
 HistoryViewerHeading.defaultProps = {
