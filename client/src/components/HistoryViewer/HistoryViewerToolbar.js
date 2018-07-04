@@ -10,6 +10,7 @@ class HistoryViewerToolbar extends Component {
     super(props);
 
     this.handleRevert = this.handleRevert.bind(this);
+    this.renderViewModeToggle = this.renderViewModeToggle.bind(this);
   }
 
   /**
@@ -21,6 +22,21 @@ class HistoryViewerToolbar extends Component {
 
     const handler = typeof onAfterRevert === 'function' ? onAfterRevert : () => {};
     return revertToVersion(recordId, versionId, 'DRAFT', 'DRAFT').then(handler(versionId));
+  }
+
+  renderViewModeToggle() {
+    const { previewState, ViewModeToggle, isPreviewable } = this.props;
+
+    if (!isPreviewable || previewState !== 'edit') {
+      return null;
+    }
+
+    return (
+      <ViewModeToggle
+        id="view-mode-toggle-in-edit-nb"
+        area={'edit'}
+      />
+    );
   }
 
   render() {
@@ -36,12 +52,11 @@ class HistoryViewerToolbar extends Component {
             attributes={{
               title: i18n._t('HistoryViewerToolbar.REVERT_UNAVAILABLE', 'Unavailable for the current version'),
             }}
-            data={{
-              buttonStyle: 'warning'
-            }}
+            data={{ buttonStyle: 'warning' }}
             disabled={isLatestVersion}
             title={i18n._t('HistoryViewerToolbar.REVERT_TO_VERSION', 'Revert to this version')}
           />
+          {this.renderViewModeToggle()}
         </div>
       </div>
     );
@@ -57,6 +72,8 @@ HistoryViewerToolbar.propTypes = {
   onAfterRevert: PropTypes.func,
   recordId: PropTypes.number.isRequired,
   versionId: PropTypes.number.isRequired,
+  ViewModeToggle: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  previewState: React.PropTypes.oneOf(['edit', 'preview', 'split']),
 };
 
 HistoryViewerToolbar.defaultProps = {
@@ -86,10 +103,10 @@ export { HistoryViewerToolbar as Component };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   inject(
-    ['FormAction'],
-    (FormActionComponent) => ({
-      FormActionComponent,
-    }),
+    ['FormAction', 'ViewModeToggle'],
+    (FormActionComponent, ViewModeToggle) => ({
+      FormActionComponent, ViewModeToggle
+  }),
     () => 'VersionedAdmin.HistoryViewer.Toolbar'
   )
 )(HistoryViewerToolbar);

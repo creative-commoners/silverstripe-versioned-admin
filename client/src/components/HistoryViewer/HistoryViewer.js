@@ -1,7 +1,7 @@
 /* global window */
 
 import React, { Component, PropTypes } from 'react';
-import { compose } from 'redux';
+import { compose, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Griddle from 'griddle-react';
 import historyViewerConfig from 'containers/HistoryViewer/HistoryViewerConfig';
@@ -10,6 +10,8 @@ import { inject } from 'lib/Injector';
 import Loading from 'components/Loading/Loading';
 import { setCurrentPage, showVersion } from 'state/historyviewer/HistoryViewerActions';
 import { versionType } from 'types/versionType';
+import ResizeAware from 'react-resize-aware';
+import * as viewModeActions from 'state/viewMode/viewModeActions';
 
 /**
  * The HistoryViewer component is abstract, and requires an Injector component
@@ -134,6 +136,7 @@ class HistoryViewer extends Component {
       isPreviewable,
       recordId,
       recordClass,
+      previewState,
       schemaUrl,
       VersionDetailComponent,
     } = this.props;
@@ -152,6 +155,7 @@ class HistoryViewer extends Component {
     const props = {
       isLatestVersion: latestVersion && latestVersion.Version === version.Version,
       isPreviewable,
+      previewState,
       recordId,
       schemaUrl: schemaUrl.replace(/:id|:class|:version/g, (match) => schemaReplacements[match]),
       version,
@@ -159,7 +163,9 @@ class HistoryViewer extends Component {
 
     return (
       <div className="history-viewer fill-height">
-        <VersionDetailComponent {...props} />
+        <ResizeAware style={{ position: 'relative' }} onResize={({ width }) => this.props.onResize(width)}>
+          <VersionDetailComponent {...props} />
+        </ResizeAware>
       </div>
     );
   }
@@ -210,7 +216,7 @@ class HistoryViewer extends Component {
   /**
    * Renders a list of versions
    *
-   * @returns {HistoryViewerVersionList}
+   * @returns { HistoryViewerVersionList }
    */
   renderVersionList() {
     const { isPreviewable, ListComponent, onSelect } = this.props;
@@ -254,6 +260,7 @@ HistoryViewer.propTypes = {
   recordId: PropTypes.number.isRequired,
   currentVersion: PropTypes.number,
   isPreviewable: PropTypes.bool,
+  previewState: PropTypes.oneOf(['edit', 'preview', 'split']),
   VersionDetailComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   versions: PropTypes.shape({
     Versions: PropTypes.shape({
@@ -289,9 +296,11 @@ HistoryViewer.defaultProps = {
 
 
 function mapStateToProps(state) {
+  const viewMode = state.viewMode;
   const { currentPage, currentVersion } = state.versionedAdmin.historyViewer;
 
   return {
+    previewState: viewMode.activeState,
     page: currentPage,
     currentVersion,
   };
@@ -299,12 +308,19 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    viewModeActions: bindActionCreators(viewModeActions, dispatch),
     onSelect(id) {
       dispatch(showVersion(id));
     },
     onSetPage(page) {
       dispatch(setCurrentPage(page));
     },
+    actions: {
+      viewMode: bindActionCreators(viewModeActions, dispatch),
+    },
+    onResize(panelWidth) {
+      dispatch(viewModeActions.enableOrDisableSplitMode(panelWidth));
+    }
   };
 }
 

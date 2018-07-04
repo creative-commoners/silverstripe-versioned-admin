@@ -6,6 +6,7 @@ import HistoryViewerVersion from 'components/HistoryViewer/HistoryViewerVersion'
 import HistoryViewerVersionDetail from 'components/HistoryViewer/HistoryViewerVersionDetail';
 import HistoryViewerVersionList from 'components/HistoryViewer/HistoryViewerVersionList';
 import HistoryViewerVersionState from 'components/HistoryViewer/HistoryViewerVersionState';
+import ViewModeToggle from 'components/ViewModeToggle/ViewModeToggle';
 
 export default () => {
   Injector.component.registerMany({
@@ -16,6 +17,7 @@ export default () => {
     HistoryViewerVersionDetail,
     HistoryViewerVersionList,
     HistoryViewerVersionState,
+    ViewModeToggle
   });
 };
 

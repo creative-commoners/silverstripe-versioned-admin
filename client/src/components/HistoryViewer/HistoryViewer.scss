@@ -82,9 +82,9 @@
   width: 50%;
 }
 
-// Hide preview on small devices. @todo replace this with a view toggle component
-@include media-breakpoint-down(md) {
-  .history-viewer__preview {
-    display: none;
-  }
-}
+//// Hide preview on small devices. @todo replace this with a view toggle component
+//@include media-breakpoint-down(md) {
+//  .history-viewer__preview {
+//    display: none;
+//  }
+//}

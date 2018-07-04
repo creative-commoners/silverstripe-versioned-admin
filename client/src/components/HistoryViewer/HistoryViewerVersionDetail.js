@@ -16,34 +16,6 @@ class HistoryViewerVersionDetail extends PureComponent {
   }
 
   /**
-   * If the preview panel is enabled, return the component
-   *
-   * @returns {Preview|null}
-   */
-  getPreview() {
-    const { isPreviewable, version, PreviewComponent } = this.props;
-
-    if (!isPreviewable) {
-      return null;
-    }
-
-    return (
-      <PreviewComponent
-        className="history-viewer__preview flexbox-area-grow" // removes default: fill-height
-        itemLinks={{
-          preview: {
-            Stage: {
-              href: `${version.AbsoluteLink}&archiveDate=${version.LastEdited}`,
-              type: 'text/html',
-            },
-          },
-        }}
-        itemId={version.Version}
-      />
-    );
-  }
-
-  /**
    * Until the CMS is fully React driven, we must control certain aspects of the CMS DOM with
    * manual CSS tweaks. @todo remove this when React drives the CMS.
    */
@@ -60,7 +32,39 @@ class HistoryViewerVersionDetail extends PureComponent {
     }
   }
 
-  render() {
+  /**
+   * If the preview panel is enabled, return the component
+   *
+   * @returns {Preview|null}
+   */
+  renderPreview() {
+    // const disableSplitModeAtWidth = 991;
+
+    const { isPreviewable, version, PreviewComponent, previewState } =
+      this.props;
+
+    if (!isPreviewable || previewState === 'edit') {
+      return null;
+    }
+
+    return (
+      <PreviewComponent
+        className="history-viewer__preview flexbox-area-grow" // removes default: fill-height
+        itemLinks={{
+          preview: {
+            Stage: {
+              href: `${version.AbsoluteLink}&archiveDate=${version.LastEdited}`,
+                type: 'text/html',
+            },
+          },
+        }}
+        itemId={version.Version}
+        // viewSplittable={cmsMainPanelWidth > disableSplitModeAtWidth}
+      />
+    );
+  }
+
+  renderDetailForm() {
     const {
       isLatestVersion,
       isPreviewable,
@@ -68,38 +72,51 @@ class HistoryViewerVersionDetail extends PureComponent {
       recordId,
       schemaUrl,
       ToolbarComponent,
-      version
+      version,
+      previewState
     } = this.props;
 
     const containerClasses = isPreviewable ? 'panel panel--padded panel--padded-side panel--scrollable' : '';
 
+    // Hide when the preview mode is explicitly enabled
+    if (previewState === 'preview' && isPreviewable) {
+      return null;
+    }
+
     return (
-      <div className="flexbox-area-grow fill-width">
-        <div className="flexbox-area-grow fill-height">
-          <div className={classnames(containerClasses, 'flexbox-area-grow')}>
-            <ListComponent
-              extraClass="history-viewer__table--current"
-              isActive
-              versions={[version]}
-            />
-
-            <div className="history-viewer__version-detail">
-              <FormBuilderLoader
-                identifier="HistoryViewer.VersionDetail"
-                schemaUrl={schemaUrl}
-              />
-            </div>
-          </div>
-
-          <ToolbarComponent
-            identifier="HistoryViewer.VersionDetail.Toolbar"
-            isLatestVersion={isLatestVersion}
-            recordId={recordId}
-            versionId={version.Version}
+      <div className="flexbox-area-grow fill-height">
+        <div className={classnames(containerClasses, 'flexbox-area-grow')}>
+          <ListComponent
+            extraClass="history-viewer__table--current"
+            isActive
+            versions={[version]}
           />
+
+          <div className="history-viewer__version-detail">
+            <FormBuilderLoader
+              identifier="HistoryViewer.VersionDetail"
+              schemaUrl={schemaUrl}
+            />
+          </div>
         </div>
 
-        {this.getPreview()}
+        <ToolbarComponent
+          identifier="HistoryViewer.VersionDetail.Toolbar"
+          isLatestVersion={isLatestVersion}
+          recordId={recordId}
+          versionId={version.Version}
+          previewState={previewState}
+          isPreviewable={isPreviewable}
+        />
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <div className="flexbox-area-grow fill-width">
+        {this.renderDetailForm()}
+        {this.renderPreview()}
       </div>
     );
   }
@@ -114,6 +131,7 @@ HistoryViewerVersionDetail.propTypes = {
   schemaUrl: PropTypes.string.isRequired,
   ToolbarComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   version: versionType.isRequired,
+  previewState: React.PropTypes.oneOf(['edit', 'preview', 'split']),
 };
 
 HistoryViewerVersionDetail.defaultProps = {
@@ -128,7 +146,7 @@ export default inject(
   (ListComponent, ToolbarComponent, PreviewComponent) => ({
     ListComponent,
     ToolbarComponent,
-    PreviewComponent,
+    PreviewComponent
   }),
   ({ version }, context) => `${context}.HistoryViewerVersionDetail.${version.Version}`
 )(HistoryViewerVersionDetail);
