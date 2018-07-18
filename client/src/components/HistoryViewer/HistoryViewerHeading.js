@@ -55,11 +55,12 @@ class HistoryViewerHeading extends Component {
             <DropdownMenu>
               <div className="form-check">
                 <input
+                  id="history-viewer-compare-two"
                   type="checkbox"
                   checked={compareModeSelected}
                   onChange={this.handleCompareModeChange}
                 />
-                <label className="form-check-label" htmlFor="exampleCheck1"> Compare 2 versions</label>
+                <label className="form-check-label" htmlFor="history-viewer-compare-two"> Compare 2 versions</label>
               </div>
             </DropdownMenu>
           </Dropdown>
