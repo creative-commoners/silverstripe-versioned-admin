@@ -21,23 +21,28 @@ class DiffTransformationTest extends SapphireTest
         'Second' => 'Two',
         'Third' => 'Three',
     ];
-    
+
+    /**
+     * @var Form
+     */
     private $testForm;
-    
+
     protected function setUp()
     {
         parent::setUp();
-        
+
         $fields = FieldList::create();
         foreach ($this->testData as $fieldName => $fieldValue) {
             $fields->push(TextField::create($fieldName)->setValue($fieldValue));
         }
+
         $this->testForm = Form::create(
             Controller::create(),
             'TestForm',
             $fields,
             FieldList::create()
         );
+
         // Don't go injecting an extra field to the $fields FieldList
         $this->testForm->disableSecurityToken();
     }
@@ -45,31 +50,37 @@ class DiffTransformationTest extends SapphireTest
     public function testSetComparisonData()
     {
         $transformation = new DiffTransformation();
-        $testData = $this->testData;
-        foreach ([
-            $testData,
-            DataObject::create($testData),
-            ArrayData::create($testData)
-        ] as $testInput) {
-            $transformation->setComparisonData($testInput);
-            $this->assertEquals($testData, $transformation->getComparisonData());
-        }
-        
-        $this->expectException(InvalidArgumentException::class);
-        
+        $transformation->setComparisonData($this->testData);
+        $this->assertEquals($this->testData, $transformation->getComparisonData(), 'Arrays are accepted');
+
+        $transformation->setComparisonData(DataObject::create($this->testData));
+        $this->assertEquals($this->testData, $transformation->getComparisonData(), 'DataObjects are accepted');
+
+        $transformation->setComparisonData(ArrayData::create($this->testData));
+        $this->assertEquals($this->testData, $transformation->getComparisonData(), 'ArrayDatas are accepted');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testSetComparisonDataThrowsExceptionWithInvalidArgument()
+    {
+        $transformation = new DiffTransformation();
         $transformation->setComparisonData('First', '1st');
     }
-    
+
     public function testSetComparisonDataMerge()
     {
         $transformation = new DiffTransformation([
             'First' => 'Once',
             'Second' => '2nd',
         ]);
+
         $transformation->setComparisonData([
             'Second' => 'Twice',
             'Third' => 'Thrice',
         ], $merge = true);
+
         // will throw an exception if not enough data is set
         $this->testForm->transform($transformation);
     }
@@ -82,47 +93,68 @@ class DiffTransformationTest extends SapphireTest
             'Second' => '2nd',
             'Third' => '3rd',
         ];
+
         $expected = $this->getExpected($update);
         $transformation = DiffTransformation::create($update);
         $form->transform($transformation);
+
         foreach ($form->Fields() as $index => $field) {
-            $this->assertEquals($expected[$index], $field->Value());
+            $this->assertContains($expected[$index]['before'], $field->Value(), 'Value before is shown');
+            $this->assertContains($expected[$index]['after'], $field->Value(), 'Value after is shown');
         }
     }
-    
+
+    /**
+     * @expectedException LogicException
+     */
     public function testTransformWithNotEnoughData()
     {
         $form = $this->testForm;
         $transformation = DiffTransformation::create([
             'First' => '1st',
         ]);
-        $this->expectException(LogicException::class);
         $form->transform($transformation);
     }
-    
+
     public function testTransformWithCompositeFields()
     {
         $form = $this->testForm;
-        $form->setFields(CompositeField::create($form->Fields()));
+        $form->setFields(
+            FieldList::create(
+                CompositeField::create($form->Fields())
+            )
+        );
         $update = [
             'First' => 'Uno',
             'Second' => 'Dos',
             'Third' => 'Tres',
         ];
+
         $expected = $this->getExpected($update);
         $transformation = DiffTransformation::create($update);
         $form->transform($transformation);
+
         foreach (array_values($form->Fields()->dataFields()) as $index => $field) {
-            $this->assertEquals($expected[$index], $field->Value());
+            $this->assertContains($expected[$index]['before'], $field->Value(), 'Value before is shown');
+            $this->assertContains($expected[$index]['after'], $field->Value(), 'Value after is shown');
         }
     }
-    
-    private function getExpected($update, $original = null)
+
+    /**
+     * Helper method for generating the expected result for diff views between fields
+     *
+     * @param array $update
+     * @return array
+     */
+    private function getExpected($update)
     {
         $expected = [];
-        $original = $original ?: $this->testData;
+        $original = $this->testData;
         foreach (array_combine(array_values($update), array_values($original)) as $now => $was) {
-            $expected[] = "<ins>$now</ins> <del>$was</del>";
+            $expected[] = [
+                'before' => "<ins>$now</ins>",
+                'after' => "<del>$was</del>",
+            ];
         }
         return $expected;
     }
