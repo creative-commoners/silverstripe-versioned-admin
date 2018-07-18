@@ -23,7 +23,7 @@ jQuery.entwine('ss', ($) => {
           recordClass={this.data('record-class')}
           contextKey={this.data('context-key')}
           isPreviewable={!!parseInt(this.data('preview-enabled'), 10)}
-          limit={30}
+          limit={10}
           offset={0}
           page={0}
         />,
