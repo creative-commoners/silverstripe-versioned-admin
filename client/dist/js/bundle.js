@@ -413,6 +413,10 @@ var _versionType = __webpack_require__("./node_modules/babel-loader/lib/index.js
 
 var _HistoryViewerActions = __webpack_require__("./client/src/state/historyviewer/HistoryViewerActions.js");
 
+var _i18n = __webpack_require__("i18n");
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -431,6 +435,7 @@ var HistoryViewerVersion = function (_Component) {
 
     _this.handleClick = _this.handleClick.bind(_this);
     _this.handleClose = _this.handleClose.bind(_this);
+    _this.handleCompare = _this.handleCompare.bind(_this);
     return _this;
   }
 
@@ -471,19 +476,40 @@ var HistoryViewerVersion = function (_Component) {
       onSelect(0);
     }
   }, {
+    key: 'handleCompare',
+    value: function handleCompare() {
+      var _props2 = this.props,
+          onCompare = _props2.onCompare,
+          version = _props2.version;
+
+      onCompare(version.Version);
+    }
+  }, {
     key: 'renderClearButton',
     value: function renderClearButton() {
-      var _props2 = this.props,
-          isActive = _props2.isActive,
-          FormActionComponent = _props2.FormActionComponent;
+      var _props3 = this.props,
+          isActive = _props3.isActive,
+          showCompareButton = _props3.showCompareButton,
+          FormActionComponent = _props3.FormActionComponent;
 
       if (!isActive) {
         return null;
       }
 
+      var compareButton = showCompareButton ? _react2.default.createElement(
+        FormActionComponent,
+        {
+          onClick: this.handleCompare,
+          title: _i18n2.default._t('HistoryViewerVersion.COMPARE', 'Compare'),
+          extraClass: 'history-viewer__compare-button'
+        },
+        _i18n2.default._t('HistoryViewerVersion.COMPARE', 'Compare')
+      ) : null;
+
       return _react2.default.createElement(
         'td',
         { className: 'history-viewer__actions' },
+        compareButton,
         _react2.default.createElement(FormActionComponent, {
           onClick: this.handleClose,
           icon: 'cancel',
@@ -495,10 +521,10 @@ var HistoryViewerVersion = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _props3 = this.props,
-          version = _props3.version,
-          isActive = _props3.isActive,
-          StateComponent = _props3.StateComponent;
+      var _props4 = this.props,
+          version = _props4.version,
+          isActive = _props4.isActive,
+          StateComponent = _props4.StateComponent;
 
 
       return _react2.default.createElement(
@@ -532,7 +558,9 @@ var HistoryViewerVersion = function (_Component) {
 
 HistoryViewerVersion.propTypes = {
   isActive: _react2.default.PropTypes.bool,
+  showCompareButton: _react2.default.PropTypes.bool,
   onSelect: _react2.default.PropTypes.func,
+  onCompare: _react2.default.PropTypes.func,
   StateComponent: _react.PropTypes.oneOfType([_react.PropTypes.node, _react.PropTypes.func]).isRequired,
   FormActionComponent: _react.PropTypes.oneOfType([_react.PropTypes.node, _react.PropTypes.func]).isRequired,
   version: _versionType.versionType
@@ -543,16 +571,26 @@ HistoryViewerVersion.defaultProps = {
   version: _versionType.defaultVersion
 };
 
+function mapStateToProps(state) {
+  return {
+    showCompareButton: !state.versionedAdmin.historyViewer.compareMode
+  };
+}
+
 function mapDispatchToProps(dispatch) {
   return {
     onSelect: function onSelect(id) {
       dispatch((0, _HistoryViewerActions.showVersion)(id));
+    },
+    onCompare: function onCompare(id) {
+      dispatch((0, _HistoryViewerActions.setCompareMode)(true));
+      dispatch((0, _HistoryViewerActions.setCompareFrom)(id));
     }
   };
 }
 
 exports.Component = HistoryViewerVersion;
-exports.default = (0, _redux.compose)((0, _reactRedux.connect)(null, mapDispatchToProps), (0, _Injector.inject)(['HistoryViewerVersionState', 'FormAction'], function (StateComponent, FormActionComponent) {
+exports.default = (0, _redux.compose)((0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps), (0, _Injector.inject)(['HistoryViewerVersionState', 'FormAction'], function (StateComponent, FormActionComponent) {
   return {
     StateComponent: StateComponent,
     FormActionComponent: FormActionComponent
@@ -1298,7 +1336,7 @@ function clearMessages() {
 function setCompareMode(enabled) {
   return function (dispatch) {
     dispatch({
-      type: _HistoryViewerActionTypes2.default.SET_COMPARISON_MODE,
+      type: _HistoryViewerActionTypes2.default.SET_COMPARE_MODE,
       payload: { enabled: enabled }
     });
   };
