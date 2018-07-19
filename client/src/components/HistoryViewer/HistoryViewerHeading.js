@@ -58,7 +58,7 @@ class HistoryViewerHeading extends Component {
                   onChange={this.handleCompareModeChange}
                 />
                 <label className="form-check-label" htmlFor="history-viewer-compare-two">
-                  {i18n._t('HistoryViewerHeading.COMPARE_VERSIONS', 'Compare 2 versions')}
+                  {i18n._t('HistoryViewerHeading.COMPARE_VERSIONS', 'Compare two versions')}
                 </label>
               </div>
             </DropdownMenu>
