@@ -131,6 +131,10 @@ var _HistoryViewerVersionState = __webpack_require__("./client/src/components/Hi
 
 var _HistoryViewerVersionState2 = _interopRequireDefault(_HistoryViewerVersionState);
 
+var _HistoryViewerCompareWarning = __webpack_require__("./client/src/components/HistoryViewer/HistoryViewerCompareWarning.js");
+
+var _HistoryViewerCompareWarning2 = _interopRequireDefault(_HistoryViewerCompareWarning);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = function () {
@@ -141,7 +145,8 @@ exports.default = function () {
     HistoryViewerVersion: _HistoryViewerVersion2.default,
     HistoryViewerVersionDetail: _HistoryViewerVersionDetail2.default,
     HistoryViewerVersionList: _HistoryViewerVersionList2.default,
-    HistoryViewerVersionState: _HistoryViewerVersionState2.default
+    HistoryViewerVersionState: _HistoryViewerVersionState2.default,
+    HistoryViewerCompareWarning: _HistoryViewerCompareWarning2.default
   });
 };
 
@@ -192,6 +197,133 @@ __webpack_require__("./node_modules/expose-loader/index.js?versionType!./client/
 __webpack_require__("./client/src/legacy/HistoryViewer/HistoryViewerEntwine.js");
 
 __webpack_require__("./client/src/boot/index.js");
+
+/***/ }),
+
+/***/ "./client/src/components/HistoryViewer/HistoryViewerCompareWarning.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__("react-redux");
+
+var _i18n = __webpack_require__("i18n");
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+var _HistoryViewerActions = __webpack_require__("./client/src/state/historyviewer/HistoryViewerActions.js");
+
+var _classnames = __webpack_require__("classnames");
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var HistoryViewerCompareWarning = function (_Component) {
+  _inherits(HistoryViewerCompareWarning, _Component);
+
+  function HistoryViewerCompareWarning(props) {
+    _classCallCheck(this, HistoryViewerCompareWarning);
+
+    var _this = _possibleConstructorReturn(this, (HistoryViewerCompareWarning.__proto__ || Object.getPrototypeOf(HistoryViewerCompareWarning)).call(this, props));
+
+    _this.handleDismissCompare = _this.handleDismissCompare.bind(_this);
+    return _this;
+  }
+
+  _createClass(HistoryViewerCompareWarning, [{
+    key: 'handleDismissCompare',
+    value: function handleDismissCompare() {
+      this.props.onDismissCompare();
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props = this.props,
+          compareMode = _props.compareMode,
+          fixed = _props.fixed;
+
+
+      if (!compareMode) {
+        return null;
+      }
+
+      var classes = ['history-viewer__compare-notice'];
+
+      if (fixed) {
+        classes.push('fixed');
+      }
+
+      return _react2.default.createElement(
+        'div',
+        { className: (0, _classnames2.default)(classes) },
+        _react2.default.createElement(
+          'span',
+          { className: 'notice-message' },
+          _react2.default.createElement(
+            'strong',
+            null,
+            _i18n2.default._t('HistoryViewer.COMPARE_MODE', 'Compare mode'),
+            ': '
+          ),
+          _i18n2.default._t('HistoryViewer.SELECT_PROMPT', 'Select two versions')
+        ),
+        _react2.default.createElement(
+          'button',
+          { className: 'btn dismiss-button font-icon-cancel', onClick: this.handleDismissCompare },
+          _i18n2.default._t('HistoryViewer.EXIT', 'Exit')
+        )
+      );
+    }
+  }]);
+
+  return HistoryViewerCompareWarning;
+}(_react.Component);
+
+HistoryViewerCompareWarning.propTypes = {
+  compareMode: _react.PropTypes.bool.isRequired,
+  fixed: _react.PropTypes.bool.isRequired
+};
+
+HistoryViewerCompareWarning.defaultProps = {
+  fixed: false
+};
+
+function mapStateToProps(state) {
+  var compareMode = state.versionedAdmin.historyViewer.compareMode;
+
+
+  return {
+    compareMode: compareMode
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onDismissCompare: function onDismissCompare() {
+      dispatch((0, _HistoryViewerActions.setCompareMode)(false));
+    }
+  };
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(HistoryViewerCompareWarning);
 
 /***/ }),
 
@@ -882,6 +1014,7 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
           recordId = _props3.recordId,
           schemaUrl = _props3.schemaUrl,
           ToolbarComponent = _props3.ToolbarComponent,
+          CompareWarningComponent = _props3.CompareWarningComponent,
           version = _props3.version,
           compareMode = _props3.compareMode,
           compareFrom = _props3.compareFrom,
@@ -922,7 +1055,8 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
               })
             )
           ),
-          toolbar
+          toolbar,
+          _react2.default.createElement(CompareWarningComponent, { fixed: true })
         ),
         this.getPreview()
       );
@@ -952,11 +1086,12 @@ HistoryViewerVersionDetail.defaultProps = {
 };
 
 exports.Component = HistoryViewerVersionDetail;
-exports.default = (0, _Injector.inject)(['HistoryViewerVersionList', 'HistoryViewerToolbar', 'Preview'], function (ListComponent, ToolbarComponent, PreviewComponent) {
+exports.default = (0, _Injector.inject)(['HistoryViewerVersionList', 'HistoryViewerToolbar', 'Preview', 'HistoryViewerCompareWarning'], function (ListComponent, ToolbarComponent, PreviewComponent, CompareWarningComponent) {
   return {
     ListComponent: ListComponent,
     ToolbarComponent: ToolbarComponent,
-    PreviewComponent: PreviewComponent
+    PreviewComponent: PreviewComponent,
+    CompareWarningComponent: CompareWarningComponent
   };
 }, function (_ref, context) {
   var version = _ref.version;
@@ -1743,9 +1878,9 @@ var _Loading = __webpack_require__("components/Loading/Loading");
 
 var _Loading2 = _interopRequireDefault(_Loading);
 
-var _versionType = __webpack_require__("./node_modules/babel-loader/lib/index.js??ref--0!./client/src/types/versionType.js");
-
 var _HistoryViewerActions = __webpack_require__("./client/src/state/historyviewer/HistoryViewerActions.js");
+
+var _versionType = __webpack_require__("./node_modules/babel-loader/lib/index.js??ref--0!./client/src/types/versionType.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1766,7 +1901,6 @@ var HistoryViewer = function (_Component) {
     _this.handleSetPage = _this.handleSetPage.bind(_this);
     _this.handleNextPage = _this.handleNextPage.bind(_this);
     _this.handlePrevPage = _this.handlePrevPage.bind(_this);
-    _this.handleDismissCompare = _this.handleDismissCompare.bind(_this);
     return _this;
   }
 
@@ -1844,39 +1978,6 @@ var HistoryViewer = function (_Component) {
         return;
       }
       this.handleSetPage(currentPage - 1);
-    }
-  }, {
-    key: 'handleDismissCompare',
-    value: function handleDismissCompare() {
-      this.props.onDismissCompare();
-    }
-  }, {
-    key: 'renderCompareWarning',
-    value: function renderCompareWarning() {
-      if (!this.props.compareMode) {
-        return '';
-      }
-
-      return _react2.default.createElement(
-        'div',
-        { className: 'history-viewer__compare-notice' },
-        _react2.default.createElement(
-          'span',
-          { className: 'notice-message' },
-          _react2.default.createElement(
-            'strong',
-            null,
-            _i18n2.default._t('HistoryViewer.COMPARE_MODE', 'Compare mode'),
-            ': '
-          ),
-          _i18n2.default._t('HistoryViewer.SELECT_PROMPT', 'Select two versions')
-        ),
-        _react2.default.createElement(
-          'button',
-          { className: 'btn dismiss-button font-icon-cancel', onClick: this.handleDismissCompare },
-          _i18n2.default._t('HistoryViewer.EXIT', 'Exit')
-        )
-      );
     }
   }, {
     key: 'renderVersionDetail',
@@ -1970,13 +2071,14 @@ var HistoryViewer = function (_Component) {
     value: function renderVersionList() {
       var _props4 = this.props,
           isPreviewable = _props4.isPreviewable,
-          ListComponent = _props4.ListComponent;
+          ListComponent = _props4.ListComponent,
+          CompareWarningComponent = _props4.CompareWarningComponent;
 
 
       return _react2.default.createElement(
         'div',
         { className: 'history-viewer fill-height' },
-        this.renderCompareWarning(),
+        _react2.default.createElement(CompareWarningComponent, null),
         _react2.default.createElement(
           'div',
           { className: isPreviewable ? 'panel panel--padded panel--scrollable' : '' },
@@ -1997,6 +2099,7 @@ var HistoryViewer = function (_Component) {
       var _props5 = this.props,
           compareFrom = _props5.compareFrom,
           compareTo = _props5.compareTo;
+
 
       if (compareFrom && compareTo) {
         return this.renderVersionDetail();
@@ -2043,6 +2146,7 @@ HistoryViewer.propTypes = {
   compareTo: _react.PropTypes.number,
   isPreviewable: _react.PropTypes.bool,
   VersionDetailComponent: _react.PropTypes.oneOfType([_react.PropTypes.node, _react.PropTypes.func]).isRequired,
+  CompareWarningComponent: _react.PropTypes.oneOfType([_react.PropTypes.node, _react.PropTypes.func]).isRequired,
   versions: _react.PropTypes.shape({
     Versions: _react.PropTypes.shape({
       pageInfo: _react.PropTypes.shape({
@@ -2100,18 +2204,16 @@ function mapDispatchToProps(dispatch) {
     },
     onSetPage: function onSetPage(page) {
       dispatch((0, _HistoryViewerActions.setCurrentPage)(page));
-    },
-    onDismissCompare: function onDismissCompare() {
-      dispatch((0, _HistoryViewerActions.setCompareMode)(false));
     }
   };
 }
 
 exports.Component = HistoryViewer;
-exports.default = (0, _redux.compose)((0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps), _HistoryViewerConfig2.default, (0, _Injector.inject)(['HistoryViewerVersionList', 'HistoryViewerVersionDetail'], function (HistoryViewerVersionList, HistoryViewerVersionDetail) {
+exports.default = (0, _redux.compose)((0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps), _HistoryViewerConfig2.default, (0, _Injector.inject)(['HistoryViewerVersionList', 'HistoryViewerVersionDetail', 'HistoryViewerCompareWarning'], function (HistoryViewerVersionList, HistoryViewerVersionDetail, HistoryViewerCompareWarning) {
   return {
     ListComponent: HistoryViewerVersionList,
-    VersionDetailComponent: HistoryViewerVersionDetail
+    VersionDetailComponent: HistoryViewerVersionDetail,
+    CompareWarningComponent: HistoryViewerCompareWarning
   };
 }, function (_ref) {
   var contextKey = _ref.contextKey;
