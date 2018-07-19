@@ -142,12 +142,20 @@ class HistoryViewer extends Component {
     } = this.props;
 
     // Insert variables into the schema URL via regex replacements
-    const schemaReplacements = {
+    const schemaVersionReplacements = {
       ':id': recordId,
       ':class': recordClass,
       ':version': currentVersion,
     };
-
+    const schemaCompareReplacements = {
+      ':id': recordId,
+      ':class': recordClass,
+      ':from': compareFrom,
+      ':to': compareTo,
+    };
+    const schemaSearch = compareMode ? /:id|:class|:from|:to/g : /:id|:class|:version/g;
+    const schemaReplacements = compareMode ? schemaCompareReplacements : schemaVersionReplacements;
+    
     const filterVersions = (wantedID) => (potential => potential.Version === wantedID);
 
     const version = this.getVersions().find(filterVersions(currentVersion));
@@ -162,7 +170,7 @@ class HistoryViewer extends Component {
       isLatestVersion: latestVersion && latestVersion.Version === version.Version,
       isPreviewable,
       recordId,
-      schemaUrl: schemaUrl.replace(/:id|:class|:version/g, (match) => schemaReplacements[match]),
+      schemaUrl: schemaUrl.replace(schemaSearch, (match) => schemaReplacements[match]),
       version,
       ...compare,
     };

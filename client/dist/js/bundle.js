@@ -1023,7 +1023,7 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
 
       var containerClasses = this.isPreviewable() ? 'panel panel--padded panel--padded-side panel--scrollable' : '';
 
-      var versions = compareMode ? [compareFrom, compareTo] : [version];
+      var versions = compareMode ? [compareTo, compareFrom] : [version];
 
       var toolbar = compareMode ? null : _react2.default.createElement(ToolbarComponent, {
         identifier: 'HistoryViewer.VersionDetail.Toolbar',
@@ -1452,9 +1452,13 @@ var historyViewerConfig = function historyViewerConfig(HistoryViewer) {
     }, {
       key: 'getSchemaUrl',
       value: function getSchemaUrl() {
-        var schemaUrlBase = this.getConfig().form.versionForm.schemaUrl + '/:id';
-        var schemaQueryString = 'RecordClass=:class&RecordID=:id&RecordVersion=:version';
-        return schemaUrlBase + '?' + schemaQueryString;
+        var compareMode = this.props.compareMode;
+
+        var formName = compareMode ? 'compareForm' : 'versionForm';
+        var schemaUrlBase = this.getConfig().form[formName].schemaUrl + '/:id';
+        var schemaQueryVersion = compareMode ? 'RecordVersionFrom=:from&RecordVersionTo=:to' : 'RecordVersion=:version';
+        var schemaQueryID = 'RecordClass=:class&RecordID=:id';
+        return schemaUrlBase + '?' + schemaQueryID + '&' + schemaQueryVersion;
       }
     }, {
       key: 'render',
@@ -1993,11 +1997,19 @@ var HistoryViewer = function (_Component) {
           compareFrom = _props2.compareFrom,
           compareTo = _props2.compareTo;
 
-      var schemaReplacements = {
+      var schemaVersionReplacements = {
         ':id': recordId,
         ':class': recordClass,
         ':version': currentVersion
       };
+      var schemaCompareReplacements = {
+        ':id': recordId,
+        ':class': recordClass,
+        ':from': compareFrom,
+        ':to': compareTo
+      };
+      var schemaSearch = compareMode ? /:id|:class|:from|:to/g : /:id|:class|:version/g;
+      var schemaReplacements = compareMode ? schemaCompareReplacements : schemaVersionReplacements;
 
       var filterVersions = function filterVersions(wantedID) {
         return function (potential) {
@@ -2017,7 +2029,7 @@ var HistoryViewer = function (_Component) {
         isLatestVersion: latestVersion && latestVersion.Version === version.Version,
         isPreviewable: isPreviewable,
         recordId: recordId,
-        schemaUrl: schemaUrl.replace(/:id|:class|:version/g, function (match) {
+        schemaUrl: schemaUrl.replace(schemaSearch, function (match) {
           return schemaReplacements[match];
         }),
         version: version

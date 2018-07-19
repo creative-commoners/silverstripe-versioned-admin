@@ -10,9 +10,14 @@ const historyViewerConfig = (HistoryViewer) => {
     }
 
     getSchemaUrl() {
-      const schemaUrlBase = `${this.getConfig().form.versionForm.schemaUrl}/:id`;
-      const schemaQueryString = 'RecordClass=:class&RecordID=:id&RecordVersion=:version';
-      return `${schemaUrlBase}?${schemaQueryString}`;
+      const { compareMode } = this.props;
+      const formName = compareMode ? 'compareForm' : 'versionForm';
+      const schemaUrlBase = `${this.getConfig().form[formName].schemaUrl}/:id`;
+      const schemaQueryVersion = compareMode ?
+        'RecordVersionFrom=:from&RecordVersionTo=:to' :
+        'RecordVersion=:version';
+      const schemaQueryID = 'RecordClass=:class&RecordID=:id';
+      return `${schemaUrlBase}?${schemaQueryID}&${schemaQueryVersion}`;
     }
 
     render() {
