@@ -21,9 +21,9 @@ class HistoryViewerVersionDetail extends PureComponent {
    * @returns {Preview|null}
    */
   getPreview() {
-    const { isPreviewable, version, PreviewComponent } = this.props;
+    const { version, PreviewComponent } = this.props;
 
-    if (!isPreviewable) {
+    if (!this.isPreviewable()) {
       return null;
     }
 
@@ -43,17 +43,20 @@ class HistoryViewerVersionDetail extends PureComponent {
     );
   }
 
+  isPreviewable() {
+    const { isPreviewable, compareMode } = this.props;
+    return isPreviewable && !compareMode;
+  }
+
   /**
    * Until the CMS is fully React driven, we must control certain aspects of the CMS DOM with
    * manual CSS tweaks. @todo remove this when React drives the CMS.
    */
   toggleToolbarClass() {
-    const { isPreviewable } = this.props;
-
     const selector = document
       .querySelector('.CMSPageHistoryViewerController div:not(.cms-content-tools) .cms-content-header');
 
-    if (selector && isPreviewable) {
+    if (selector && this.isPreviewable()) {
       selector
         .classList
         .toggle('history-viewer__toolbar--condensed');
@@ -63,16 +66,27 @@ class HistoryViewerVersionDetail extends PureComponent {
   render() {
     const {
       isLatestVersion,
-      isPreviewable,
       ListComponent,
       recordId,
       schemaUrl,
       ToolbarComponent,
       CompareWarningComponent,
       version,
+      compareMode,
+      compareFrom,
+      compareTo,
     } = this.props;
 
-    const containerClasses = isPreviewable ? 'panel panel--padded panel--padded-side panel--scrollable' : '';
+    const containerClasses = this.isPreviewable() ? 'panel panel--padded panel--padded-side panel--scrollable' : '';
+
+    const versions = compareMode ? [compareFrom, compareTo] : [version];
+
+    const toolbar = compareMode ? null : (<ToolbarComponent
+      identifier="HistoryViewer.VersionDetail.Toolbar"
+      isLatestVersion={isLatestVersion}
+      recordId={recordId}
+      versionId={version.Version}
+    />);
 
     return (
       <div className="flexbox-area-grow fill-width">
@@ -81,7 +95,7 @@ class HistoryViewerVersionDetail extends PureComponent {
             <ListComponent
               extraClass="history-viewer__table--current"
               isActive
-              versions={[version]}
+              versions={versions}
             />
 
             <div className="history-viewer__version-detail">
@@ -92,13 +106,7 @@ class HistoryViewerVersionDetail extends PureComponent {
             </div>
           </div>
 
-          <ToolbarComponent
-            identifier="HistoryViewer.VersionDetail.Toolbar"
-            isLatestVersion={isLatestVersion}
-            recordId={recordId}
-            versionId={version.Version}
-          />
-
+          {toolbar}
           <CompareWarningComponent fixed />
         </div>
 
@@ -116,7 +124,10 @@ HistoryViewerVersionDetail.propTypes = {
   recordId: PropTypes.number.isRequired,
   schemaUrl: PropTypes.string.isRequired,
   ToolbarComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
-  version: versionType.isRequired,
+  version: versionType,
+  compareMode: PropTypes.bool,
+  compareFrom: versionType,
+  compareTo: versionType,
 };
 
 HistoryViewerVersionDetail.defaultProps = {
