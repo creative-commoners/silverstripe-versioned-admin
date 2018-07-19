@@ -68,7 +68,7 @@ class HistoryViewerVersion extends Component {
    * Renders a "compare mode" button which will allow the user to start selecting versions to
    * compare differences between. This is usually rendered in the "more actions" menu.
    *
-   * @returns {FormActionComponent|null}
+   * @returns {FormAction|null}
    */
   renderCompareButton() {
     const { isActive, showCompareButton, FormActionComponent } = this.props;
