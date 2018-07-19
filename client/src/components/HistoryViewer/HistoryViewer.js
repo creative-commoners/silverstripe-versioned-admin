@@ -8,8 +8,8 @@ import historyViewerConfig from 'containers/HistoryViewer/HistoryViewerConfig';
 import i18n from 'i18n';
 import { inject } from 'lib/Injector';
 import Loading from 'components/Loading/Loading';
+import { setCurrentPage, showVersion } from 'state/historyviewer/HistoryViewerActions';
 import { versionType } from 'types/versionType';
-import { setCurrentPage, showVersion, setCompareMode } from 'state/historyviewer/HistoryViewerActions';
 
 /**
  * The HistoryViewer component is abstract, and requires an Injector component
@@ -23,7 +23,6 @@ class HistoryViewer extends Component {
     this.handleSetPage = this.handleSetPage.bind(this);
     this.handleNextPage = this.handleNextPage.bind(this);
     this.handlePrevPage = this.handlePrevPage.bind(this);
-    this.handleDismissCompare = this.handleDismissCompare.bind(this);
   }
 
   /**
@@ -122,33 +121,6 @@ class HistoryViewer extends Component {
       return;
     }
     this.handleSetPage(currentPage - 1);
-  }
-
-  handleDismissCompare() {
-    this.props.onDismissCompare();
-  }
-
-  /**
-   * Renders a notice indicating the user is in compare mode (iff compare mode is active)
-   *
-   * @returns {string}
-   */
-  renderCompareWarning() {
-    if (!this.props.compareMode) {
-      return '';
-    }
-
-    return (
-      <div className="history-viewer__compare-notice">
-        <span className="notice-message">
-          <strong>{i18n._t('HistoryViewer.COMPARE_MODE', 'Compare mode')}: </strong>
-          {i18n._t('HistoryViewer.SELECT_PROMPT', 'Select two versions')}
-        </span>
-        <button className="btn dismiss-button font-icon-cancel" onClick={this.handleDismissCompare}>
-          {i18n._t('HistoryViewer.EXIT', 'Exit')}
-        </button>
-      </div>
-    );
   }
 
   /**
@@ -251,11 +223,11 @@ class HistoryViewer extends Component {
    * @returns {HistoryViewerVersionList}
    */
   renderVersionList() {
-    const { isPreviewable, ListComponent } = this.props;
+    const { isPreviewable, ListComponent, CompareWarningComponent } = this.props;
 
     return (
       <div className="history-viewer fill-height">
-        {this.renderCompareWarning()}
+        <CompareWarningComponent />
         <div className={isPreviewable ? 'panel panel--padded panel--scrollable' : ''}>
           <ListComponent
             versions={this.getVersions()}
@@ -271,6 +243,7 @@ class HistoryViewer extends Component {
 
   renderCompareMode() {
     const { compareFrom, compareTo } = this.props;
+
     if (compareFrom && compareTo) {
         return this.renderVersionDetail();
     }
@@ -308,6 +281,7 @@ HistoryViewer.propTypes = {
   compareTo: PropTypes.number,
   isPreviewable: PropTypes.bool,
   VersionDetailComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
+  CompareWarningComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   versions: PropTypes.shape({
     Versions: PropTypes.shape({
       pageInfo: PropTypes.shape({
@@ -367,9 +341,6 @@ function mapDispatchToProps(dispatch) {
     onSetPage(page) {
       dispatch(setCurrentPage(page));
     },
-    onDismissCompare() {
-      dispatch(setCompareMode(false));
-    },
   };
 }
 
@@ -379,10 +350,11 @@ export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   historyViewerConfig,
   inject(
-    ['HistoryViewerVersionList', 'HistoryViewerVersionDetail'],
-    (HistoryViewerVersionList, HistoryViewerVersionDetail) => ({
+    ['HistoryViewerVersionList', 'HistoryViewerVersionDetail', 'HistoryViewerCompareWarning'],
+    (HistoryViewerVersionList, HistoryViewerVersionDetail, HistoryViewerCompareWarning) => ({
       ListComponent: HistoryViewerVersionList,
       VersionDetailComponent: HistoryViewerVersionDetail,
+      CompareWarningComponent: HistoryViewerCompareWarning,
     }),
     ({ contextKey }) => `VersionedAdmin.HistoryViewer.${contextKey}`
   )

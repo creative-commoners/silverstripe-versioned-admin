@@ -70,6 +70,7 @@ class HistoryViewerVersionDetail extends PureComponent {
       recordId,
       schemaUrl,
       ToolbarComponent,
+      CompareWarningComponent,
       version,
       compareMode,
       compareFrom,
@@ -80,12 +81,14 @@ class HistoryViewerVersionDetail extends PureComponent {
 
     const versions = compareMode ? [compareFrom, compareTo] : [version];
 
-    const toolbar = compareMode ? null : (<ToolbarComponent
-      identifier="HistoryViewer.VersionDetail.Toolbar"
-      isLatestVersion={isLatestVersion}
-      recordId={recordId}
-      versionId={version.Version}
-    />);
+    const toolbar = compareMode ? null : (
+      <ToolbarComponent
+        identifier="HistoryViewer.VersionDetail.Toolbar"
+        isLatestVersion={isLatestVersion}
+        recordId={recordId}
+        versionId={version.Version}
+      />
+    );
 
     return (
       <div className="flexbox-area-grow fill-width">
@@ -106,6 +109,7 @@ class HistoryViewerVersionDetail extends PureComponent {
           </div>
 
           {toolbar}
+          <CompareWarningComponent fixed />
         </div>
 
         {this.getPreview()}
@@ -136,11 +140,12 @@ HistoryViewerVersionDetail.defaultProps = {
 export { HistoryViewerVersionDetail as Component };
 
 export default inject(
-  ['HistoryViewerVersionList', 'HistoryViewerToolbar', 'Preview'],
-  (ListComponent, ToolbarComponent, PreviewComponent) => ({
+  ['HistoryViewerVersionList', 'HistoryViewerToolbar', 'Preview', 'HistoryViewerCompareWarning'],
+  (ListComponent, ToolbarComponent, PreviewComponent, CompareWarningComponent) => ({
     ListComponent,
     ToolbarComponent,
     PreviewComponent,
+    CompareWarningComponent,
   }),
   ({ version }, context) => `${context}.HistoryViewerVersionDetail.${version.Version}`
 )(HistoryViewerVersionDetail);
