@@ -45,7 +45,7 @@ class HistoryViewerHeading extends Component {
           <Dropdown
             isOpen={dropdownOpen}
             toggle={this.toggle}
-            className="compare-dropdown dropdown-menu-right"
+            className="compare-dropdown"
           >
             <DropdownToggle className="font-icon-sliders" />
             <DropdownMenu>
