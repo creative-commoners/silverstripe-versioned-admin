@@ -79,7 +79,7 @@ class HistoryViewerVersionDetail extends PureComponent {
 
     const containerClasses = this.isPreviewable() ? 'panel panel--padded panel--padded-side panel--scrollable' : '';
 
-    const versions = compareMode ? [compareFrom, compareTo] : [version];
+    const versions = compareMode ? [compareTo, compareFrom] : [version];
 
     const toolbar = compareMode ? null : (<ToolbarComponent
       identifier="HistoryViewer.VersionDetail.Toolbar"
