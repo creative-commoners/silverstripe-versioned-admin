@@ -204,6 +204,9 @@ __webpack_require__("./client/src/boot/index.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.Component = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _i18n = __webpack_require__("i18n");
 
@@ -213,40 +216,160 @@ var _react = __webpack_require__("react");
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactstrap = __webpack_require__("reactstrap");
+
+var _HistoryViewerActions = __webpack_require__("./client/src/state/historyviewer/HistoryViewerActions.js");
+
+var _redux = __webpack_require__("redux");
+
+var _reactRedux = __webpack_require__("react-redux");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var HistoryViewerHeading = function HistoryViewerHeading(props) {
-  return _react2.default.createElement(
-    'tr',
-    null,
-    _react2.default.createElement(
-      'th',
-      null,
-      '#'
-    ),
-    _react2.default.createElement(
-      'th',
-      null,
-      _i18n2.default._t('HistoryViewer.Record', 'Record')
-    ),
-    _react2.default.createElement(
-      'th',
-      null,
-      _i18n2.default._t('HistoryViewer.Author', 'Author')
-    ),
-    props.hasActions ? _react2.default.createElement('th', null) : null
-  );
-};
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var HistoryViewerHeading = function (_Component) {
+  _inherits(HistoryViewerHeading, _Component);
+
+  function HistoryViewerHeading(props) {
+    _classCallCheck(this, HistoryViewerHeading);
+
+    var _this = _possibleConstructorReturn(this, (HistoryViewerHeading.__proto__ || Object.getPrototypeOf(HistoryViewerHeading)).call(this, props));
+
+    _this.toggle = _this.toggle.bind(_this);
+    _this.handleCompareModeChange = _this.handleCompareModeChange.bind(_this);
+
+    _this.state = {
+      dropdownOpen: false
+    };
+    return _this;
+  }
+
+  _createClass(HistoryViewerHeading, [{
+    key: 'toggle',
+    value: function toggle() {
+      this.setState(function (prevState) {
+        return {
+          dropdownOpen: !prevState.dropdownOpen
+        };
+      });
+    }
+  }, {
+    key: 'handleCompareModeChange',
+    value: function handleCompareModeChange() {
+      var _props = this.props,
+          compareModeSelected = _props.compareModeSelected,
+          onCompareModeUnselect = _props.onCompareModeUnselect,
+          onCompareModeSelect = _props.onCompareModeSelect;
+
+      if (compareModeSelected) {
+        onCompareModeUnselect();
+      } else {
+        onCompareModeSelect();
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props2 = this.props,
+          compareModeSelected = _props2.compareModeSelected,
+          hasActions = _props2.hasActions;
+      var dropdownOpen = this.state.dropdownOpen;
+
+
+      return _react2.default.createElement(
+        'tr',
+        { className: 'history-viewer__heading' },
+        _react2.default.createElement(
+          'th',
+          null,
+          '#'
+        ),
+        _react2.default.createElement(
+          'th',
+          null,
+          _i18n2.default._t('HistoryViewer.Record', 'Record')
+        ),
+        _react2.default.createElement(
+          'th',
+          { className: 'author-compare-toggle__container' },
+          _react2.default.createElement(
+            'span',
+            { className: 'author-span' },
+            _i18n2.default._t('HistoryViewer.Author', 'Author')
+          ),
+          _react2.default.createElement(
+            _reactstrap.Dropdown,
+            {
+              isOpen: dropdownOpen,
+              toggle: this.toggle,
+              className: 'compare-dropdown'
+            },
+            _react2.default.createElement(_reactstrap.DropdownToggle, { className: 'font-icon-sliders' }),
+            _react2.default.createElement(
+              _reactstrap.DropdownMenu,
+              { right: true },
+              _react2.default.createElement(
+                'div',
+                { className: 'form-check' },
+                _react2.default.createElement('input', {
+                  id: 'history-viewer-compare-two',
+                  type: 'checkbox',
+                  className: 'no-change-track compare-mode__checkbox',
+                  checked: compareModeSelected,
+                  onChange: this.handleCompareModeChange
+                }),
+                _react2.default.createElement(
+                  'label',
+                  { className: 'form-check-label', htmlFor: 'history-viewer-compare-two' },
+                  _i18n2.default._t('HistoryViewerHeading.COMPARE_VERSIONS', 'Compare two versions')
+                )
+              )
+            )
+          )
+        ),
+        hasActions ? _react2.default.createElement('th', null) : null
+      );
+    }
+  }]);
+
+  return HistoryViewerHeading;
+}(_react.Component);
 
 HistoryViewerHeading.propTypes = {
-  hasActions: _react2.default.PropTypes.bool
+  hasActions: _react.PropTypes.bool,
+  compareModeSelected: _react.PropTypes.bool,
+  onCompareModeSelect: _react.PropTypes.func,
+  onCompareModeUnselect: _react.PropTypes.func
 };
 
 HistoryViewerHeading.defaultProps = {
   hasActions: false
 };
 
-exports.default = HistoryViewerHeading;
+function mapStateToProps(state) {
+  return {
+    compareModeSelected: state.versionedAdmin.historyViewer.compareMode
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onCompareModeSelect: function onCompareModeSelect() {
+      dispatch((0, _HistoryViewerActions.setCompareMode)(true));
+    },
+    onCompareModeUnselect: function onCompareModeUnselect() {
+      dispatch((0, _HistoryViewerActions.setCompareMode)(false));
+    }
+  };
+}
+
+exports.Component = HistoryViewerHeading;
+exports.default = (0, _redux.compose)((0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps))(HistoryViewerHeading);
 
 /***/ }),
 
@@ -460,43 +583,59 @@ var HistoryViewerVersion = function (_Component) {
       var _props = this.props,
           onSelect = _props.onSelect,
           version = _props.version,
-          isActive = _props.isActive;
+          isActive = _props.isActive,
+          compareMode = _props.compareMode,
+          compareFrom = _props.compareFrom,
+          onCompareSelect = _props.onCompareSelect;
 
       if (isActive) {
         return;
       }
 
-      onSelect(version.Version);
+      if (compareMode) {
+        onCompareSelect(version.Version, !compareFrom);
+      } else {
+        onSelect(version.Version);
+      }
     }
   }, {
     key: 'handleClose',
     value: function handleClose() {
-      var onSelect = this.props.onSelect;
+      var _props2 = this.props,
+          onSelect = _props2.onSelect,
+          compareMode = _props2.compareMode,
+          compareFrom = _props2.compareFrom,
+          onCompareSelect = _props2.onCompareSelect,
+          version = _props2.version;
 
-      onSelect(0);
+      if (compareMode) {
+        onCompareSelect(0, version.Version === compareFrom);
+      } else {
+        onSelect(0);
+      }
     }
   }, {
     key: 'handleCompare',
     value: function handleCompare() {
-      var _props2 = this.props,
-          onCompare = _props2.onCompare,
-          version = _props2.version;
+      var _props3 = this.props,
+          onCompare = _props3.onCompare,
+          version = _props3.version;
 
       onCompare(version.Version);
     }
   }, {
-    key: 'renderClearButton',
-    value: function renderClearButton() {
-      var _props3 = this.props,
-          isActive = _props3.isActive,
-          showCompareButton = _props3.showCompareButton,
-          FormActionComponent = _props3.FormActionComponent;
+    key: 'renderCompareButton',
+    value: function renderCompareButton() {
+      var _props4 = this.props,
+          compareMode = _props4.compareMode,
+          FormActionComponent = _props4.FormActionComponent;
 
-      if (!isActive) {
+
+      if (compareMode) {
         return null;
       }
 
-      var compareButton = showCompareButton ? _react2.default.createElement(
+      return _react2.default.createElement(
         FormActionComponent,
         {
           onClick: this.handleCompare,
@@ -504,27 +643,45 @@ var HistoryViewerVersion = function (_Component) {
           extraClass: 'history-viewer__compare-button'
         },
         _i18n2.default._t('HistoryViewerVersion.COMPARE', 'Compare')
-      ) : null;
+      );
+    }
+  }, {
+    key: 'renderClearButton',
+    value: function renderClearButton() {
+      var FormActionComponent = this.props.FormActionComponent;
+
+
+      return _react2.default.createElement(FormActionComponent, {
+        onClick: this.handleClose,
+        icon: 'cancel',
+        title: null,
+        extraClass: 'history-viewer__close-button'
+      });
+    }
+  }, {
+    key: 'renderActions',
+    value: function renderActions() {
+      var isActive = this.props.isActive;
+
+
+      if (!isActive) {
+        return null;
+      }
 
       return _react2.default.createElement(
         'td',
         { className: 'history-viewer__actions' },
-        compareButton,
-        _react2.default.createElement(FormActionComponent, {
-          onClick: this.handleClose,
-          icon: 'cancel',
-          title: null,
-          extraClass: 'history-viewer__close-button'
-        })
+        this.renderCompareButton(),
+        this.renderClearButton()
       );
     }
   }, {
     key: 'render',
     value: function render() {
-      var _props4 = this.props,
-          version = _props4.version,
-          isActive = _props4.isActive,
-          StateComponent = _props4.StateComponent;
+      var _props5 = this.props,
+          version = _props5.version,
+          isActive = _props5.isActive,
+          StateComponent = _props5.StateComponent;
 
 
       return _react2.default.createElement(
@@ -548,7 +705,7 @@ var HistoryViewerVersion = function (_Component) {
           null,
           this.getAuthor()
         ),
-        this.renderClearButton()
+        this.renderActions()
       );
     }
   }]);
@@ -558,9 +715,10 @@ var HistoryViewerVersion = function (_Component) {
 
 HistoryViewerVersion.propTypes = {
   isActive: _react2.default.PropTypes.bool,
-  showCompareButton: _react2.default.PropTypes.bool,
+  compareMode: _react2.default.PropTypes.bool,
   onSelect: _react2.default.PropTypes.func,
   onCompare: _react2.default.PropTypes.func,
+  onCompareSelect: _react2.default.PropTypes.func,
   StateComponent: _react.PropTypes.oneOfType([_react.PropTypes.node, _react.PropTypes.func]).isRequired,
   FormActionComponent: _react.PropTypes.oneOfType([_react.PropTypes.node, _react.PropTypes.func]).isRequired,
   version: _versionType.versionType
@@ -573,7 +731,8 @@ HistoryViewerVersion.defaultProps = {
 
 function mapStateToProps(state) {
   return {
-    showCompareButton: !state.versionedAdmin.historyViewer.compareMode
+    compareMode: state.versionedAdmin.historyViewer.compareMode,
+    compareFrom: state.versionedAdmin.historyViewer.compareFrom
   };
 }
 
@@ -583,8 +742,15 @@ function mapDispatchToProps(dispatch) {
       dispatch((0, _HistoryViewerActions.showVersion)(id));
     },
     onCompare: function onCompare(id) {
-      dispatch((0, _HistoryViewerActions.setCompareMode)(true));
       dispatch((0, _HistoryViewerActions.setCompareFrom)(id));
+      dispatch((0, _HistoryViewerActions.setCompareMode)(true));
+    },
+    onCompareSelect: function onCompareSelect(versionID, setFrom) {
+      if (setFrom) {
+        dispatch((0, _HistoryViewerActions.setCompareFrom)(versionID));
+      } else {
+        dispatch((0, _HistoryViewerActions.setCompareTo)(versionID));
+      }
     }
   };
 }
@@ -668,12 +834,11 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
     key: 'getPreview',
     value: function getPreview() {
       var _props = this.props,
-          isPreviewable = _props.isPreviewable,
           version = _props.version,
           PreviewComponent = _props.PreviewComponent;
 
 
-      if (!isPreviewable) {
+      if (!this.isPreviewable()) {
         return null;
       }
 
@@ -691,31 +856,48 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
       });
     }
   }, {
+    key: 'isPreviewable',
+    value: function isPreviewable() {
+      var _props2 = this.props,
+          isPreviewable = _props2.isPreviewable,
+          compareMode = _props2.compareMode;
+
+      return isPreviewable && !compareMode;
+    }
+  }, {
     key: 'toggleToolbarClass',
     value: function toggleToolbarClass() {
-      var isPreviewable = this.props.isPreviewable;
-
-
       var selector = document.querySelector('.CMSPageHistoryViewerController div:not(.cms-content-tools) .cms-content-header');
 
-      if (selector && isPreviewable) {
+      if (selector && this.isPreviewable()) {
         selector.classList.toggle('history-viewer__toolbar--condensed');
       }
     }
   }, {
     key: 'render',
     value: function render() {
-      var _props2 = this.props,
-          isLatestVersion = _props2.isLatestVersion,
-          isPreviewable = _props2.isPreviewable,
-          ListComponent = _props2.ListComponent,
-          recordId = _props2.recordId,
-          schemaUrl = _props2.schemaUrl,
-          ToolbarComponent = _props2.ToolbarComponent,
-          version = _props2.version;
+      var _props3 = this.props,
+          isLatestVersion = _props3.isLatestVersion,
+          ListComponent = _props3.ListComponent,
+          recordId = _props3.recordId,
+          schemaUrl = _props3.schemaUrl,
+          ToolbarComponent = _props3.ToolbarComponent,
+          version = _props3.version,
+          compareMode = _props3.compareMode,
+          compareFrom = _props3.compareFrom,
+          compareTo = _props3.compareTo;
 
 
-      var containerClasses = isPreviewable ? 'panel panel--padded panel--padded-side panel--scrollable' : '';
+      var containerClasses = this.isPreviewable() ? 'panel panel--padded panel--padded-side panel--scrollable' : '';
+
+      var versions = compareMode ? [compareFrom, compareTo] : [version];
+
+      var toolbar = compareMode ? null : _react2.default.createElement(ToolbarComponent, {
+        identifier: 'HistoryViewer.VersionDetail.Toolbar',
+        isLatestVersion: isLatestVersion,
+        recordId: recordId,
+        versionId: version.Version
+      });
 
       return _react2.default.createElement(
         'div',
@@ -729,7 +911,7 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
             _react2.default.createElement(ListComponent, {
               extraClass: 'history-viewer__table--current',
               isActive: true,
-              versions: [version]
+              versions: versions
             }),
             _react2.default.createElement(
               'div',
@@ -740,12 +922,7 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
               })
             )
           ),
-          _react2.default.createElement(ToolbarComponent, {
-            identifier: 'HistoryViewer.VersionDetail.Toolbar',
-            isLatestVersion: isLatestVersion,
-            recordId: recordId,
-            versionId: version.Version
-          })
+          toolbar
         ),
         this.getPreview()
       );
@@ -763,7 +940,10 @@ HistoryViewerVersionDetail.propTypes = {
   recordId: _react.PropTypes.number.isRequired,
   schemaUrl: _react.PropTypes.string.isRequired,
   ToolbarComponent: _react.PropTypes.oneOfType([_react.PropTypes.node, _react.PropTypes.func]).isRequired,
-  version: _versionType.versionType.isRequired
+  version: _versionType.versionType,
+  compareMode: _react.PropTypes.bool,
+  compareFrom: _versionType.versionType,
+  compareTo: _versionType.versionType
 };
 
 HistoryViewerVersionDetail.defaultProps = {
@@ -1199,7 +1379,7 @@ _jquery2.default.entwine('ss', function ($) {
         recordClass: this.data('record-class'),
         contextKey: this.data('context-key'),
         isPreviewable: !!parseInt(this.data('preview-enabled'), 10),
-        limit: 10,
+        limit: 30,
         offset: 0,
         page: 0
       }), this[0]);
@@ -1481,7 +1661,7 @@ function historyViewerReducer() {
 
         _compareTo = payload.version;
 
-        if (_compareFrom && _compareTo < _compareFrom) {
+        if (_compareTo && _compareFrom && _compareTo < _compareFrom) {
           _compareFrom = _compareTo;
           _compareTo = state.compareFrom;
         }
@@ -1533,6 +1713,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Component = undefined;
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = __webpack_require__("react");
@@ -1561,9 +1743,9 @@ var _Loading = __webpack_require__("components/Loading/Loading");
 
 var _Loading2 = _interopRequireDefault(_Loading);
 
-var _HistoryViewerActions = __webpack_require__("./client/src/state/historyviewer/HistoryViewerActions.js");
-
 var _versionType = __webpack_require__("./node_modules/babel-loader/lib/index.js??ref--0!./client/src/types/versionType.js");
+
+var _HistoryViewerActions = __webpack_require__("./client/src/state/historyviewer/HistoryViewerActions.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1705,7 +1887,10 @@ var HistoryViewer = function (_Component) {
           recordId = _props2.recordId,
           recordClass = _props2.recordClass,
           schemaUrl = _props2.schemaUrl,
-          VersionDetailComponent = _props2.VersionDetailComponent;
+          VersionDetailComponent = _props2.VersionDetailComponent,
+          compareMode = _props2.compareMode,
+          compareFrom = _props2.compareFrom,
+          compareTo = _props2.compareTo;
 
       var schemaReplacements = {
         ':id': recordId,
@@ -1713,12 +1898,21 @@ var HistoryViewer = function (_Component) {
         ':version': currentVersion
       };
 
-      var version = this.getVersions().find(function (version) {
-        return version.Version === currentVersion;
-      });
-      var latestVersion = this.getLatestVersion();
+      var filterVersions = function filterVersions(wantedID) {
+        return function (potential) {
+          return potential.Version === wantedID;
+        };
+      };
 
-      var props = {
+      var version = this.getVersions().find(filterVersions(currentVersion));
+      var latestVersion = this.getLatestVersion();
+      var compare = compareMode ? {
+        compareMode: compareMode,
+        compareFrom: this.getVersions().find(filterVersions(compareFrom)),
+        compareTo: this.getVersions().find(filterVersions(compareTo))
+      } : {};
+
+      var props = _extends({
         isLatestVersion: latestVersion && latestVersion.Version === version.Version,
         isPreviewable: isPreviewable,
         recordId: recordId,
@@ -1726,7 +1920,7 @@ var HistoryViewer = function (_Component) {
           return schemaReplacements[match];
         }),
         version: version
-      };
+      }, compare);
 
       return _react2.default.createElement(
         'div',
@@ -1776,8 +1970,7 @@ var HistoryViewer = function (_Component) {
     value: function renderVersionList() {
       var _props4 = this.props,
           isPreviewable = _props4.isPreviewable,
-          ListComponent = _props4.ListComponent,
-          onSelect = _props4.onSelect;
+          ListComponent = _props4.ListComponent;
 
 
       return _react2.default.createElement(
@@ -1788,7 +1981,6 @@ var HistoryViewer = function (_Component) {
           'div',
           { className: isPreviewable ? 'panel panel--padded panel--scrollable' : '' },
           _react2.default.createElement(ListComponent, {
-            onSelect: onSelect,
             versions: this.getVersions()
           }),
           _react2.default.createElement(
@@ -1847,6 +2039,8 @@ HistoryViewer.propTypes = {
   recordId: _react.PropTypes.number.isRequired,
   currentVersion: _react.PropTypes.number,
   compareMode: _react.PropTypes.bool,
+  compareFrom: _react.PropTypes.number,
+  compareTo: _react.PropTypes.number,
   isPreviewable: _react.PropTypes.bool,
   VersionDetailComponent: _react.PropTypes.oneOfType([_react.PropTypes.node, _react.PropTypes.func]).isRequired,
   versions: _react.PropTypes.shape({
@@ -12768,6 +12962,13 @@ module.exports = ReactDom;
 /***/ (function(module, exports) {
 
 module.exports = ReactRedux;
+
+/***/ }),
+
+/***/ "reactstrap":
+/***/ (function(module, exports) {
+
+module.exports = Reactstrap;
 
 /***/ }),
 
