@@ -27,15 +27,15 @@ class HistoryViewerHeading extends Component {
     const checkbox = event.target;
     if (checkbox.checked) {
       this.props.onCompareModeSelect();
-    }
-    else {
+    } else {
       this.props.onCompareModeUnSelect();
     }
   }
 
   render() {
+    const { compareModeSelected, hasActions } = this.props;
+    const { dropdownOpen } = this.state;
 
-    const { compareModeSelected } = this.props;
     return (
       <tr className="history-viewer__heading">
         <th>#</th>
@@ -43,15 +43,12 @@ class HistoryViewerHeading extends Component {
         <th className="author-compare-toggle__container">
           <span className="author-span">{i18n._t('HistoryViewer.Author', 'Author')}</span>
           <Dropdown
-            isOpen={this.state.dropdownOpen}
+            isOpen={dropdownOpen}
             toggle={this.toggle}
             className="compare-dropdown"
             right
           >
-            <DropdownToggle
-              className="font-icon-sliders"
-            >
-            </DropdownToggle>
+            <DropdownToggle className="font-icon-sliders" />
             <DropdownMenu>
               <div className="form-check">
                 <input
@@ -60,21 +57,22 @@ class HistoryViewerHeading extends Component {
                   checked={compareModeSelected}
                   onChange={this.handleCompareModeChange}
                 />
-                <label className="form-check-label" htmlFor="history-viewer-compare-two"> Compare 2 versions</label>
+                <label className="form-check-label" htmlFor="history-viewer-compare-two">
+                  {i18n._t('HistoryViewerHeading.COMPARE_VERSIONS', 'Compare 2 versions')}
+                </label>
               </div>
             </DropdownMenu>
           </Dropdown>
         </th>
-        {this.props.hasActions ? <th/> : null}
-
+        {hasActions ? <th/> : null}
       </tr>
     );
   }
 }
 
 HistoryViewerHeading.propTypes = {
-  hasActions: React.PropTypes.bool,
-  compareModeSelected: React.PropTypes.bool,
+  hasActions: PropTypes.bool,
+  compareModeSelected: PropTypes.bool,
 };
 
 HistoryViewerHeading.defaultProps = {
@@ -99,6 +97,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 export { HistoryViewerHeading as Component };
+
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
 )(HistoryViewerHeading);
