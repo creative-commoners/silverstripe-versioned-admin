@@ -8,8 +8,8 @@ import historyViewerConfig from 'containers/HistoryViewer/HistoryViewerConfig';
 import i18n from 'i18n';
 import { inject } from 'lib/Injector';
 import Loading from 'components/Loading/Loading';
-import { setCurrentPage, showVersion, setCompareMode } from 'state/historyviewer/HistoryViewerActions';
 import { versionType } from 'types/versionType';
+import { setCurrentPage, showVersion, setCompareMode } from 'state/historyviewer/HistoryViewerActions';
 
 /**
  * The HistoryViewer component is abstract, and requires an Injector component
@@ -164,6 +164,9 @@ class HistoryViewer extends Component {
       recordClass,
       schemaUrl,
       VersionDetailComponent,
+      compareMode,
+      compareFrom,
+      compareTo,
     } = this.props;
 
     // Insert variables into the schema URL via regex replacements
@@ -173,9 +176,15 @@ class HistoryViewer extends Component {
       ':version': currentVersion,
     };
 
-    // eslint-disable-next-line no-shadow
-    const version = this.getVersions().find(version => version.Version === currentVersion);
+    const filterVersions = (wantedID) => (potential => potential.Version === wantedID);
+
+    const version = this.getVersions().find(filterVersions(currentVersion));
     const latestVersion = this.getLatestVersion();
+    const compare = compareMode ? {
+      compareMode,
+      compareFrom: this.getVersions().find(filterVersions(compareFrom)),
+      compareTo: this.getVersions().find(filterVersions(compareTo)),
+    } : {};
 
     const props = {
       isLatestVersion: latestVersion && latestVersion.Version === version.Version,
@@ -183,6 +192,7 @@ class HistoryViewer extends Component {
       recordId,
       schemaUrl: schemaUrl.replace(/:id|:class|:version/g, (match) => schemaReplacements[match]),
       version,
+      ...compare,
     };
 
     return (
@@ -241,14 +251,13 @@ class HistoryViewer extends Component {
    * @returns {HistoryViewerVersionList}
    */
   renderVersionList() {
-    const { isPreviewable, ListComponent, onSelect } = this.props;
+    const { isPreviewable, ListComponent } = this.props;
 
     return (
       <div className="history-viewer fill-height">
         {this.renderCompareWarning()}
         <div className={isPreviewable ? 'panel panel--padded panel--scrollable' : ''}>
           <ListComponent
-            onSelect={onSelect}
             versions={this.getVersions()}
           />
 
@@ -259,7 +268,7 @@ class HistoryViewer extends Component {
       </div>
     );
   }
-  
+
   renderCompareMode() {
     const { compareFrom, compareTo } = this.props;
     if (compareFrom && compareTo) {
@@ -274,7 +283,7 @@ class HistoryViewer extends Component {
     if (loading) {
       return <Loading />;
     }
-    
+
     if (compareMode) {
       return this.renderCompareMode();
     }
@@ -295,6 +304,8 @@ HistoryViewer.propTypes = {
   recordId: PropTypes.number.isRequired,
   currentVersion: PropTypes.number,
   compareMode: PropTypes.bool,
+  compareFrom: PropTypes.number,
+  compareTo: PropTypes.number,
   isPreviewable: PropTypes.bool,
   VersionDetailComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   versions: PropTypes.shape({
@@ -331,7 +342,13 @@ HistoryViewer.defaultProps = {
 
 
 function mapStateToProps(state) {
-  const { currentPage, currentVersion, compareMode, compareFrom, compareTo } = state.versionedAdmin.historyViewer;
+  const {
+    currentPage,
+    currentVersion,
+    compareMode,
+    compareFrom,
+    compareTo,
+  } = state.versionedAdmin.historyViewer;
 
   return {
     page: currentPage,

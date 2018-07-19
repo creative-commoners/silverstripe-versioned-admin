@@ -1,9 +1,9 @@
 import i18n from 'i18n';
 import React, { PropTypes, Component } from 'react';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Dropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
 import { setCompareMode } from 'state/historyviewer/HistoryViewerActions';
-import { compose } from "redux";
-import { connect } from "react-redux";
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 
 class HistoryViewerHeading extends Component {
   constructor(props) {
@@ -27,14 +27,12 @@ class HistoryViewerHeading extends Component {
     const checkbox = event.target;
     if (checkbox.checked) {
       this.props.onCompareModeSelect();
-    }
-    else {
+    } else {
       this.props.onCompareModeUnSelect();
     }
   }
 
   render() {
-
     const { compareModeSelected } = this.props;
     return (
       <tr className="history-viewer__heading">
@@ -50,8 +48,7 @@ class HistoryViewerHeading extends Component {
           >
             <DropdownToggle
               className="font-icon-sliders"
-            >
-            </DropdownToggle>
+            />
             <DropdownMenu>
               <div className="form-check">
                 <input
@@ -64,7 +61,7 @@ class HistoryViewerHeading extends Component {
             </DropdownMenu>
           </Dropdown>
         </th>
-        {this.props.hasActions ? <th/> : null}
+        {this.props.hasActions ? <th /> : null}
 
       </tr>
     );
@@ -72,8 +69,8 @@ class HistoryViewerHeading extends Component {
 }
 
 HistoryViewerHeading.propTypes = {
-  hasActions: React.PropTypes.bool,
-  compareModeSelected: React.PropTypes.bool,
+  hasActions: PropTypes.bool,
+  compareModeSelected: PropTypes.bool,
 };
 
 HistoryViewerHeading.defaultProps = {
@@ -94,7 +91,7 @@ function mapDispatchToProps(dispatch) {
     onCompareModeUnSelect() {
       dispatch(setCompareMode(false));
     }
-  }
+  };
 }
 
 export { HistoryViewerHeading as Component };
