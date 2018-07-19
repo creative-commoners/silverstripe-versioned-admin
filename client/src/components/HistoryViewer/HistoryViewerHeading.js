@@ -1,9 +1,9 @@
 import i18n from 'i18n';
 import React, { PropTypes, Component } from 'react';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Dropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
 import { setCompareMode } from 'state/historyviewer/HistoryViewerActions';
-import { compose } from "redux";
-import { connect } from "react-redux";
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 
 class HistoryViewerHeading extends Component {
   constructor(props) {
@@ -45,8 +45,7 @@ class HistoryViewerHeading extends Component {
           <Dropdown
             isOpen={dropdownOpen}
             toggle={this.toggle}
-            className="compare-dropdown"
-            right
+            className="compare-dropdown dropdown-menu-right"
           >
             <DropdownToggle className="font-icon-sliders" />
             <DropdownMenu>
@@ -64,7 +63,7 @@ class HistoryViewerHeading extends Component {
             </DropdownMenu>
           </Dropdown>
         </th>
-        {hasActions ? <th/> : null}
+        {hasActions ? <th /> : null}
       </tr>
     );
   }
@@ -92,8 +91,8 @@ function mapDispatchToProps(dispatch) {
     },
     onCompareModeUnSelect() {
       dispatch(setCompareMode(false));
-    }
-  }
+    },
+  };
 }
 
 export { HistoryViewerHeading as Component };
