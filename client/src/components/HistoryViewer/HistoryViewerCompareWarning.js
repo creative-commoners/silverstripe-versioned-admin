@@ -52,7 +52,7 @@ HistoryViewerCompareWarning.propTypes = {
   fixed: PropTypes.bool.isRequired,
 };
 
-HistoryViewer.defaultProps = {
+HistoryViewerCompareWarning.defaultProps = {
   fixed: false,
 };
 
