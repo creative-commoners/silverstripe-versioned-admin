@@ -53,6 +53,7 @@ class HistoryViewerHeading extends Component {
                 <input
                   id="history-viewer-compare-two"
                   type="checkbox"
+                  className="no-change-track"
                   checked={compareModeSelected}
                   onChange={this.handleCompareModeChange}
                 />
