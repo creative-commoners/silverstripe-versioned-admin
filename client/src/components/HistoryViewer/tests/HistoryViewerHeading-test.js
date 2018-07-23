@@ -17,8 +17,7 @@ describe('HistoryViewerHeading', () => {
     describe('simulate change event in enabled compare mode', () => {
       const wrapper = shallow(
         <HistoryViewerHeading
-          hasActions={false}
-          compareModeSelected={true}
+          compareModeSelected
           onCompareModeSelect={mockOnCompareModeSelect}
           onCompareModeUnselect={mockOnCompareModeUnselect}
         />
@@ -33,7 +32,6 @@ describe('HistoryViewerHeading', () => {
     describe('simulate change event in disabled compare mode', () => {
       const wrapper = shallow(
         <HistoryViewerHeading
-          hasActions={false}
           compareModeSelected={false}
           onCompareModeSelect={mockOnCompareModeSelect}
           onCompareModeUnselect={mockOnCompareModeUnselect}
@@ -59,18 +57,5 @@ describe('HistoryViewerHeading', () => {
       );
     }
   }
-
-  it('has four columns when hasActions is true', () => {
-    const component = ReactTestUtils.renderIntoDocument(
-      <HeadingWrapper hasActions />
-    );
-
-    const result = ReactTestUtils.scryRenderedDOMComponentsWithTag(
-      component,
-      'th'
-    );
-
-    expect(result.length).toBe(4);
-  });
 });
 
