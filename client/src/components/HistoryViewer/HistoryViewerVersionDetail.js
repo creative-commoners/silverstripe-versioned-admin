@@ -20,7 +20,7 @@ class HistoryViewerVersionDetail extends PureComponent {
    *
    * @returns {Preview|null}
    */
-  getPreview() {
+  renderPreview() {
     const { version, PreviewComponent } = this.props;
 
     if (!this.isPreviewable()) {
@@ -42,10 +42,37 @@ class HistoryViewerVersionDetail extends PureComponent {
       />
     );
   }
-
+  
+  /*
+   * Return whether or not we should be displaying the preview component
+   * @return bool
+   */
   isPreviewable() {
-    const { isPreviewable, compareMode } = this.props;
-    return isPreviewable && !compareMode;
+    const { isPreviewable } = this.props;
+    return isPreviewable && !this.isCompareMode();
+  }
+  
+  /*
+   * Return whether or not we should be comparing two versions
+   * @return bool
+   */
+  isCompareMode() {
+    const { compare } = this.props;
+    return compare && compare.versionFrom && compare.versionTo;
+  }
+  
+  /**
+   * A useful doc block explaining why we construct an array of versions in each case (noting that
+   * it previously was hard coded to return an array containing the current version only).
+   *
+   * @returns {Array}
+   */
+  getListVersions() {
+    const { compare, version } = this.props;
+    if (this.isCompareMode()) {
+      return [compare.versionTo, compare.versionFrom];
+    }
+    return [version];
   }
 
   /**
@@ -63,30 +90,30 @@ class HistoryViewerVersionDetail extends PureComponent {
     }
   }
 
+  /**
+   * If the toolbar should be viewable, return the component
+   *
+   * @returns {HistoryViewerToolbar|null}
+   */
+  renderToolbar() {
+    const { ToolbarComponent, isLatestVersion, recordId, version } = this.props;
+    if (this.isCompareMode()) {
+      return null;
+    }
+    return (
+      <ToolbarComponent
+        identifier="HistoryViewer.VersionDetail.Toolbar"
+        isLatestVersion={isLatestVersion}
+        recordId={recordId}
+        versionId={version.Version}
+      />
+    );
+  }
+
   render() {
-    const {
-      isLatestVersion,
-      ListComponent,
-      recordId,
-      schemaUrl,
-      ToolbarComponent,
-      CompareWarningComponent,
-      version,
-      compareMode,
-      compareFrom,
-      compareTo,
-    } = this.props;
+    const { ListComponent, schemaUrl, CompareWarningComponent } = this.props;
 
     const containerClasses = this.isPreviewable() ? 'panel panel--padded panel--padded-side panel--scrollable' : '';
-
-    const versions = compareMode ? [compareTo, compareFrom] : [version];
-
-    const toolbar = compareMode ? null : (<ToolbarComponent
-      identifier="HistoryViewer.VersionDetail.Toolbar"
-      isLatestVersion={isLatestVersion}
-      recordId={recordId}
-      versionId={version.Version}
-    />);
 
     return (
       <div className="flexbox-area-grow fill-width">
@@ -95,7 +122,7 @@ class HistoryViewerVersionDetail extends PureComponent {
             <ListComponent
               extraClass="history-viewer__table--current"
               isActive
-              versions={versions}
+              versions={this.getListVersions()}
             />
 
             <div className="history-viewer__version-detail">
@@ -106,11 +133,11 @@ class HistoryViewerVersionDetail extends PureComponent {
             </div>
           </div>
 
-          {toolbar}
+          {this.renderToolbar()}
           <CompareWarningComponent fixed />
         </div>
 
-        {this.getPreview()}
+        {this.renderPreview()}
       </div>
     );
   }
@@ -125,14 +152,19 @@ HistoryViewerVersionDetail.propTypes = {
   schemaUrl: PropTypes.string.isRequired,
   ToolbarComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   version: versionType,
-  compareMode: PropTypes.bool,
-  compareFrom: versionType,
-  compareTo: versionType,
+  compare: PropTypes.oneOfType([
+    PropTypes.shape({
+      versionFrom: versionType,
+      versionTo: versionType,
+    }),
+    PropTypes.bool,
+  ]),
 };
 
 HistoryViewerVersionDetail.defaultProps = {
   isLatestVersion: false,
   isPreviewable: false,
+  compare: false,
 };
 
 export { HistoryViewerVersionDetail as Component };

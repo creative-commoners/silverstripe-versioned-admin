@@ -161,10 +161,9 @@ class HistoryViewer extends Component {
     const version = this.getVersions().find(filterVersions(currentVersion));
     const latestVersion = this.getLatestVersion();
     const compare = compareMode ? {
-      compareMode,
-      compareFrom: this.getVersions().find(filterVersions(compareFrom)),
-      compareTo: this.getVersions().find(filterVersions(compareTo)),
-    } : {};
+      versionFrom: this.getVersions().find(filterVersions(compareFrom)),
+      versionTo: this.getVersions().find(filterVersions(compareTo)),
+    } : false;
 
     const props = {
       isLatestVersion: latestVersion && latestVersion.Version === version.Version,
@@ -172,7 +171,7 @@ class HistoryViewer extends Component {
       recordId,
       schemaUrl: schemaUrl.replace(schemaSearch, (match) => schemaReplacements[match]),
       version,
-      ...compare,
+      compare,
     };
 
     return (
