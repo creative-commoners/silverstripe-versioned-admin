@@ -963,8 +963,8 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
       this.toggleToolbarClass();
     }
   }, {
-    key: 'getPreview',
-    value: function getPreview() {
+    key: 'renderPreview',
+    value: function renderPreview() {
       var _props = this.props,
           version = _props.version,
           PreviewComponent = _props.PreviewComponent;
@@ -990,11 +990,28 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
   }, {
     key: 'isPreviewable',
     value: function isPreviewable() {
-      var _props2 = this.props,
-          isPreviewable = _props2.isPreviewable,
-          compareMode = _props2.compareMode;
+      var isPreviewable = this.props.isPreviewable;
 
-      return isPreviewable && !compareMode;
+      return isPreviewable && !this.isCompareMode();
+    }
+  }, {
+    key: 'isCompareMode',
+    value: function isCompareMode() {
+      var compare = this.props.compare;
+
+      return compare && compare.versionFrom && compare.versionTo;
+    }
+  }, {
+    key: 'getListVersions',
+    value: function getListVersions() {
+      var _props2 = this.props,
+          compare = _props2.compare,
+          version = _props2.version;
+
+      if (this.isCompareMode()) {
+        return [compare.versionTo, compare.versionFrom];
+      }
+      return [version];
     }
   }, {
     key: 'toggleToolbarClass',
@@ -1006,31 +1023,34 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
       }
     }
   }, {
-    key: 'render',
-    value: function render() {
+    key: 'renderToolbar',
+    value: function renderToolbar() {
       var _props3 = this.props,
-          isLatestVersion = _props3.isLatestVersion,
-          ListComponent = _props3.ListComponent,
-          recordId = _props3.recordId,
-          schemaUrl = _props3.schemaUrl,
           ToolbarComponent = _props3.ToolbarComponent,
-          CompareWarningComponent = _props3.CompareWarningComponent,
-          version = _props3.version,
-          compareMode = _props3.compareMode,
-          compareFrom = _props3.compareFrom,
-          compareTo = _props3.compareTo;
+          isLatestVersion = _props3.isLatestVersion,
+          recordId = _props3.recordId,
+          version = _props3.version;
 
-
-      var containerClasses = this.isPreviewable() ? 'panel panel--padded panel--padded-side panel--scrollable' : '';
-
-      var versions = compareMode ? [compareTo, compareFrom] : [version];
-
-      var toolbar = compareMode ? null : _react2.default.createElement(ToolbarComponent, {
+      if (this.isCompareMode()) {
+        return null;
+      }
+      return _react2.default.createElement(ToolbarComponent, {
         identifier: 'HistoryViewer.VersionDetail.Toolbar',
         isLatestVersion: isLatestVersion,
         recordId: recordId,
         versionId: version.Version
       });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props4 = this.props,
+          ListComponent = _props4.ListComponent,
+          schemaUrl = _props4.schemaUrl,
+          CompareWarningComponent = _props4.CompareWarningComponent;
+
+
+      var containerClasses = this.isPreviewable() ? 'panel panel--padded panel--padded-side panel--scrollable' : '';
 
       return _react2.default.createElement(
         'div',
@@ -1044,7 +1064,7 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
             _react2.default.createElement(ListComponent, {
               extraClass: 'history-viewer__table--current',
               isActive: true,
-              versions: versions
+              versions: this.getListVersions()
             }),
             _react2.default.createElement(
               'div',
@@ -1055,10 +1075,10 @@ var HistoryViewerVersionDetail = function (_PureComponent) {
               })
             )
           ),
-          toolbar,
+          this.renderToolbar(),
           _react2.default.createElement(CompareWarningComponent, { fixed: true })
         ),
-        this.getPreview()
+        this.renderPreview()
       );
     }
   }]);
@@ -1075,14 +1095,16 @@ HistoryViewerVersionDetail.propTypes = {
   schemaUrl: _react.PropTypes.string.isRequired,
   ToolbarComponent: _react.PropTypes.oneOfType([_react.PropTypes.node, _react.PropTypes.func]).isRequired,
   version: _versionType.versionType,
-  compareMode: _react.PropTypes.bool,
-  compareFrom: _versionType.versionType,
-  compareTo: _versionType.versionType
+  compare: _react.PropTypes.oneOfType([_react.PropTypes.shape({
+    versionFrom: _versionType.versionType,
+    versionTo: _versionType.versionType
+  }), _react.PropTypes.bool])
 };
 
 HistoryViewerVersionDetail.defaultProps = {
   isLatestVersion: false,
-  isPreviewable: false
+  isPreviewable: false,
+  compare: false
 };
 
 exports.Component = HistoryViewerVersionDetail;
@@ -1450,15 +1472,33 @@ var historyViewerConfig = function historyViewerConfig(HistoryViewer) {
         return _Config2.default.getSection(sectionKey);
       }
     }, {
-      key: 'getSchemaUrl',
-      value: function getSchemaUrl() {
+      key: 'getSchemaUrlDetails',
+      value: function getSchemaUrlDetails() {
         var compareMode = this.props.compareMode;
 
-        var formName = compareMode ? 'compareForm' : 'versionForm';
-        var schemaUrlBase = this.getConfig().form[formName].schemaUrl + '/:id';
-        var schemaQueryVersion = compareMode ? 'RecordVersionFrom=:from&RecordVersionTo=:to' : 'RecordVersion=:version';
-        var schemaQueryID = 'RecordClass=:class&RecordID=:id';
-        return schemaUrlBase + '?' + schemaQueryID + '&' + schemaQueryVersion;
+        if (compareMode) {
+          return {
+            formName: 'compareForm',
+            queryParts: ['RecordVersionFrom=:from', 'RecordVersionTo=:to']
+          };
+        }
+        return {
+          formName: 'versionForm',
+          queryParts: ['RecordVersion=:version']
+        };
+      }
+    }, {
+      key: 'getSchemaUrl',
+      value: function getSchemaUrl() {
+        var config = this.getConfig();
+
+        var _getSchemaUrlDetails = this.getSchemaUrlDetails(),
+            formName = _getSchemaUrlDetails.formName,
+            queryParts = _getSchemaUrlDetails.queryParts;
+
+        var schemaUrlBase = config.form[formName].schemaUrl + '/:id';
+        var schemaUrlQuery = queryParts.concat('RecordClass=:class&RecordID=:id').join('&');
+        return schemaUrlBase + '?' + schemaUrlQuery;
       }
     }, {
       key: 'render',
@@ -1852,8 +1892,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Component = undefined;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = __webpack_require__("react");
@@ -2020,20 +2058,20 @@ var HistoryViewer = function (_Component) {
       var version = this.getVersions().find(filterVersions(currentVersion));
       var latestVersion = this.getLatestVersion();
       var compare = compareMode ? {
-        compareMode: compareMode,
-        compareFrom: this.getVersions().find(filterVersions(compareFrom)),
-        compareTo: this.getVersions().find(filterVersions(compareTo))
-      } : {};
+        versionFrom: this.getVersions().find(filterVersions(compareFrom)),
+        versionTo: this.getVersions().find(filterVersions(compareTo))
+      } : false;
 
-      var props = _extends({
+      var props = {
         isLatestVersion: latestVersion && latestVersion.Version === version.Version,
         isPreviewable: isPreviewable,
         recordId: recordId,
         schemaUrl: schemaUrl.replace(schemaSearch, function (match) {
           return schemaReplacements[match];
         }),
-        version: version
-      }, compare);
+        version: version,
+        compare: compare
+      };
 
       return _react2.default.createElement(
         'div',

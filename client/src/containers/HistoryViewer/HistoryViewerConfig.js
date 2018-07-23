@@ -8,16 +8,32 @@ const historyViewerConfig = (HistoryViewer) => {
       const sectionKey = 'SilverStripe\\VersionedAdmin\\Controllers\\HistoryViewerController';
       return Config.getSection(sectionKey);
     }
+    
+    getSchemaUrlDetails() {
+      const { compareMode } = this.props;
+      if (compareMode) {
+        return {
+          formName: 'compareForm',
+          queryParts: [
+            'RecordVersionFrom=:from',
+            'RecordVersionTo=:to',
+          ],
+        };
+      }
+      return {
+        formName: 'versionForm',
+        queryParts: [
+          'RecordVersion=:version',
+        ],
+      };
+    }
 
     getSchemaUrl() {
-      const { compareMode } = this.props;
-      const formName = compareMode ? 'compareForm' : 'versionForm';
-      const schemaUrlBase = `${this.getConfig().form[formName].schemaUrl}/:id`;
-      const schemaQueryVersion = compareMode ?
-        'RecordVersionFrom=:from&RecordVersionTo=:to' :
-        'RecordVersion=:version';
-      const schemaQueryID = 'RecordClass=:class&RecordID=:id';
-      return `${schemaUrlBase}?${schemaQueryID}&${schemaQueryVersion}`;
+      const config = this.getConfig();
+      const { formName, queryParts } = this.getSchemaUrlDetails();
+      const schemaUrlBase = `${config.form[formName].schemaUrl}/:id`;
+      const schemaUrlQuery = queryParts.concat('RecordClass=:class&RecordID=:id').join('&');
+      return `${schemaUrlBase}?${schemaUrlQuery}`;
     }
 
     render() {
