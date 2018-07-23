@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* global jest, describe, it, expect */
 
 import React from 'react';

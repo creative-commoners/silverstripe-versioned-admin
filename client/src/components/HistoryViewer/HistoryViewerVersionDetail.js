@@ -124,8 +124,8 @@ class HistoryViewerVersionDetail extends PureComponent {
 
     const containerClasses = this.isPreviewable() ? 'panel panel--padded panel--padded-side panel--scrollable' : '';
 
-    const extraListClasses = classnames({"history-viewer__table--compare": this.isCompareMode()}, "history-viewer__table--current");
-    const formClasses = classnames({"history-viewer__version-detail--compare": this.isCompareMode()}, "history-viewer__version-detail");
+    const extraListClasses = classnames({ 'history-viewer__table--compare': compareMode }, 'history-viewer__table--current');
+    const formClasses = classnames({ 'history-viewer__version-detail--compare': compareMode }, 'history-viewer__version-detail');
 
     return (
       <div className="flexbox-area-grow fill-width">
