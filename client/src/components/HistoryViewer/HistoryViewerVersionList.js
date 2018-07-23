@@ -18,16 +18,21 @@ class HistoryViewerVersionList extends PureComponent {
     return classnames({ table: true }, extraClass);
   }
 
+  /**
+   * "isActive" in this component indicates that the content is shown - ie. the table
+   * only shows the row (or rows) that are currently highlighted above the content of
+   * this version.
+   *
+   * @param {Object} version
+   * @returns {boolean}
+   */
   isVersionActive(version) {
     const { isActive, compareFrom, compareTo } = this.props;
-
-    // "isActive" in this component indicates that the content is shown - ie. the table only shows the row (or rows)
-    // that are currently highlighted above the content of this version.
     if (isActive) {
       return true;
     }
 
-    return version.Version === compareFrom || version.Version === compareTo
+    return version.Version === compareFrom || version.Version === compareTo;
   }
 
   /**

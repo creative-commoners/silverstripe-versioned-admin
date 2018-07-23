@@ -1,7 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* global jest, describe, it, expect */
 
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
 import { Component as HistoryViewerHeading } from '../HistoryViewerHeading';
 import Enzyme, { shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-15.4/build/index';
@@ -44,18 +44,5 @@ describe('HistoryViewerHeading', () => {
       });
     });
   });
-
-
-  class HeadingWrapper extends React.PureComponent {
-    render() {
-      return (
-        <table>
-          <thead>
-            <HistoryViewerHeading {...this.props} />
-          </thead>
-        </table>
-      );
-    }
-  }
 });
 
