@@ -155,7 +155,7 @@ class HistoryViewer extends Component {
     };
     const schemaSearch = compareMode ? /:id|:class|:from|:to/g : /:id|:class|:version/g;
     const schemaReplacements = compareMode ? schemaCompareReplacements : schemaVersionReplacements;
-    
+
     const filterVersions = (wantedID) => (potential => potential.Version === wantedID);
 
     const version = this.getVersions().find(filterVersions(currentVersion));

@@ -8,7 +8,7 @@ const historyViewerConfig = (HistoryViewer) => {
       const sectionKey = 'SilverStripe\\VersionedAdmin\\Controllers\\HistoryViewerController';
       return Config.getSection(sectionKey);
     }
-    
+
     getSchemaUrlDetails() {
       const { compareMode } = this.props;
       if (compareMode) {

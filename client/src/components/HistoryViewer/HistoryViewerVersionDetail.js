@@ -16,6 +16,53 @@ class HistoryViewerVersionDetail extends PureComponent {
   }
 
   /**
+   * A useful doc block explaining why we construct an array of versions in each case (noting that
+   * it previously was hard coded to return an array containing the current version only).
+   *
+   * @returns {Array}
+   */
+  getListVersions() {
+    const { compare, version } = this.props;
+    if (this.isCompareMode()) {
+      return [compare.versionTo, compare.versionFrom];
+    }
+    return [version];
+  }
+
+  /*
+   * Return whether or not we should be displaying the preview component
+   * @return bool
+   */
+  isPreviewable() {
+    const { isPreviewable } = this.props;
+    return isPreviewable && !this.isCompareMode();
+  }
+
+  /*
+   * Return whether or not we should be comparing two versions
+   * @return bool
+   */
+  isCompareMode() {
+    const { compare } = this.props;
+    return compare && compare.versionFrom && compare.versionTo;
+  }
+
+  /**
+   * Until the CMS is fully React driven, we must control certain aspects of the CMS DOM with
+   * manual CSS tweaks. @todo remove this when React drives the CMS.
+   */
+  toggleToolbarClass() {
+    const selector = document
+      .querySelector('.CMSPageHistoryViewerController div:not(.cms-content-tools) .cms-content-header');
+
+    if (selector && this.isPreviewable()) {
+      selector
+        .classList
+        .toggle('history-viewer__toolbar--condensed');
+    }
+  }
+
+  /**
    * If the preview panel is enabled, return the component
    *
    * @returns {Preview|null}
@@ -41,53 +88,6 @@ class HistoryViewerVersionDetail extends PureComponent {
         itemId={version.Version}
       />
     );
-  }
-  
-  /*
-   * Return whether or not we should be displaying the preview component
-   * @return bool
-   */
-  isPreviewable() {
-    const { isPreviewable } = this.props;
-    return isPreviewable && !this.isCompareMode();
-  }
-  
-  /*
-   * Return whether or not we should be comparing two versions
-   * @return bool
-   */
-  isCompareMode() {
-    const { compare } = this.props;
-    return compare && compare.versionFrom && compare.versionTo;
-  }
-  
-  /**
-   * A useful doc block explaining why we construct an array of versions in each case (noting that
-   * it previously was hard coded to return an array containing the current version only).
-   *
-   * @returns {Array}
-   */
-  getListVersions() {
-    const { compare, version } = this.props;
-    if (this.isCompareMode()) {
-      return [compare.versionTo, compare.versionFrom];
-    }
-    return [version];
-  }
-
-  /**
-   * Until the CMS is fully React driven, we must control certain aspects of the CMS DOM with
-   * manual CSS tweaks. @todo remove this when React drives the CMS.
-   */
-  toggleToolbarClass() {
-    const selector = document
-      .querySelector('.CMSPageHistoryViewerController div:not(.cms-content-tools) .cms-content-header');
-
-    if (selector && this.isPreviewable()) {
-      selector
-        .classList
-        .toggle('history-viewer__toolbar--condensed');
-    }
   }
 
   /**
