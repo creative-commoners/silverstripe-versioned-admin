@@ -21,7 +21,7 @@ class HistoryViewerVersionDetail extends PureComponent {
    * this isn't always true (we need both "compare from" & "compare to").
    * So this getter abstracts that logic.
    *
-   * @returns {Array}
+   * @returns {array}
    */
   getListVersions() {
     const { compare, version } = this.props;
@@ -33,7 +33,7 @@ class HistoryViewerVersionDetail extends PureComponent {
 
   /*
    * Return whether or not we should be displaying the preview component
-   * @return {Boolean}
+   * @return {boolean}
    */
   isPreviewable() {
     const { isPreviewable } = this.props;
@@ -42,7 +42,7 @@ class HistoryViewerVersionDetail extends PureComponent {
 
   /*
    * Return whether or not we should be comparing two versions
-   * @return {Boolean}
+   * @return {boolean}
    */
   isCompareMode() {
     const { compare } = this.props;
