@@ -18,7 +18,7 @@ describe('HistoryViewerHeading', () => {
       const wrapper = shallow(
         <HistoryViewerHeading
           hasActions={false}
-          compareModeSelected={true}
+          compareModeSelected
           onCompareModeSelect={mockOnCompareModeSelect}
           onCompareModeUnselect={mockOnCompareModeUnselect}
         />

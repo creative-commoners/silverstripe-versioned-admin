@@ -4,7 +4,7 @@ import React from 'react';
 import ReactTestUtils from 'react-addons-test-utils';
 import { Component as HistoryViewer } from '../HistoryViewer';
 import Enzyme, { shallow } from 'enzyme';
-import Adapter from "enzyme-adapter-react-15.4/build/index";
+import Adapter from 'enzyme-adapter-react-15.4/build/index';
 
 Enzyme.configure({ adapter: new Adapter() });
 

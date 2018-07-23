@@ -24,12 +24,10 @@ class HistoryViewerHeading extends Component {
   }
 
   handleCompareModeChange() {
-
     const { compareModeSelected, onCompareModeUnselect, onCompareModeSelect } = this.props;
     if (compareModeSelected) {
       onCompareModeUnselect();
-    }
-    else {
+    } else {
       onCompareModeSelect();
     }
   }
@@ -73,10 +71,10 @@ class HistoryViewerHeading extends Component {
 }
 
 HistoryViewerHeading.propTypes = {
-  hasActions: React.PropTypes.bool,
-  compareModeSelected: React.PropTypes.bool,
-  onCompareModeSelect: React.PropTypes.func,
-  onCompareModeUnselect: React.PropTypes.func,
+  hasActions: PropTypes.bool,
+  compareModeSelected: PropTypes.bool,
+  onCompareModeSelect: PropTypes.func,
+  onCompareModeUnselect: PropTypes.func,
 };
 
 HistoryViewerHeading.defaultProps = {
