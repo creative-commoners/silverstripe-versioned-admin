@@ -85,7 +85,7 @@ HistoryViewerVersionList.propTypes = {
 };
 
 HistoryViewerVersionList.defaultProps = {
-  extraClass: 'table-hover',
+  extraClass: 'table-hover history-viewer__table',
   isActive: false,
   messages: [],
   versions: [],
