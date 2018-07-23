@@ -171,6 +171,27 @@
   }
 }
 
+.history-viewer__version-detail-diff {
+
+  del, ins {
+    border-radius: .192 rem;
+    padding: .192 rem;
+  }
+  del {
+    background-color: $red;
+    color: white;
+    border-radius: .192rem;
+    padding: .192rem;
+  }
+
+  ins {
+    background-color: $green;
+    color: white;
+    border-radius: .192 rem;
+    padding: .192 rem;
+  }
+}
+
 // Hide preview on small devices. @todo replace this with a view toggle component
 @include media-breakpoint-down(md) {
   .history-viewer__preview {
