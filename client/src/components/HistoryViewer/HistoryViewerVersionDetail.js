@@ -33,7 +33,7 @@ class HistoryViewerVersionDetail extends PureComponent {
 
   /*
    * Return whether or not we should be displaying the preview component
-   * @return {boolean}
+   * @returns {boolean}
    */
   isPreviewable() {
     const { isPreviewable } = this.props;
@@ -42,7 +42,7 @@ class HistoryViewerVersionDetail extends PureComponent {
 
   /*
    * Return whether or not we should be comparing two versions
-   * @return {boolean}
+   * @returns {boolean}
    */
   isCompareMode() {
     const { compare } = this.props;
