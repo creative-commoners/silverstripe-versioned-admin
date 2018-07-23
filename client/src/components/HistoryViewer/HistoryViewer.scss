@@ -22,10 +22,10 @@
   margin-left: 10px;
 }
 
-.history-viewer__row--current {
+.table .history-viewer__row--current {
   // There will only be one table row in this table state
   &, &:hover {
-    background-color: $link-color !important;
+    background-color: $link-color;
     color: $white;
   }
 
