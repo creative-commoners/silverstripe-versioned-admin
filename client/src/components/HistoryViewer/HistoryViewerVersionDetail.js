@@ -16,8 +16,10 @@ class HistoryViewerVersionDetail extends PureComponent {
   }
 
   /**
-   * A useful doc block explaining why we construct an array of versions in each case (noting that
-   * it previously was hard coded to return an array containing the current version only).
+   * Originally this component hard coded the array of versions to be passed
+   * to the list component as [version], but with the introduction of a compare mode
+   * this isn't always true (we need both "compare from" & "compare to").
+   * So this getter abstracts that logic.
    *
    * @returns {Array}
    */
@@ -31,7 +33,7 @@ class HistoryViewerVersionDetail extends PureComponent {
 
   /*
    * Return whether or not we should be displaying the preview component
-   * @return bool
+   * @return {Boolean}
    */
   isPreviewable() {
     const { isPreviewable } = this.props;
@@ -40,7 +42,7 @@ class HistoryViewerVersionDetail extends PureComponent {
 
   /*
    * Return whether or not we should be comparing two versions
-   * @return bool
+   * @return {Boolean}
    */
   isCompareMode() {
     const { compare } = this.props;
