@@ -167,29 +167,17 @@
     .form-check-label {
       text-transform: none;
     }
-
   }
 }
 
 .history-viewer__version-detail-diff {
-
-  del, ins {
-    border-radius: .192 rem;
-    padding: .192 rem;
-  }
-
   del {
-    background-color: $red;
-    color: white;
-    border-radius: .192rem;
-    padding: .192rem;
+    color: #f44;
   }
 
   ins {
-    background-color: $green;
-    color: white;
-    border-radius: .192 rem;
-    padding: .192 rem;
+    background-color: #dfd;
+    text-decoration: none;
   }
 }
 
