@@ -23,6 +23,7 @@ class HistoryViewer extends Component {
     this.handleSetPage = this.handleSetPage.bind(this);
     this.handleNextPage = this.handleNextPage.bind(this);
     this.handlePrevPage = this.handlePrevPage.bind(this);
+    this.handleDismissCompare = this.handleDismissCompare.bind(this);
   }
 
   /**

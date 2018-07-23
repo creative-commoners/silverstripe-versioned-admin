@@ -27,7 +27,7 @@ class HistoryViewerVersionList extends PureComponent {
       return true;
     }
 
-    return version.Version === compareFrom || version.Version === compareTo
+    return version.Version === compareFrom || version.Version === compareTo;
   }
 
   /**

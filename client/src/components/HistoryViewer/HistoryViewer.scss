@@ -27,10 +27,6 @@
 }
 
 .table .history-viewer__row--current {
-  &.history-viewer__table--compare {
-    margin-left: 0;
-    margin-right: 0;
-  }
   // There will only be one table row in this table state
   &, &:hover {
     background-color: $link-color;
@@ -39,6 +35,13 @@
 
   .text-muted {
     color: $white !important;
+  }
+}
+
+.history-viewer__table--current {
+  &.history-viewer__table--compare {
+    margin-left: 0;
+    margin-right: 0;
   }
 }
 
@@ -53,8 +56,8 @@
 
 .history-viewer__version-detail {
   &.history-viewer__version-detail--compare {
-    margin-left: $form-check-input-gutter;
-    margin-right: $form-check-input-gutter;
+    margin-left: $panel-padding-x;
+    margin-right: $panel-padding-x;
   }
 
   // Bring any CMS tabs in the detail view closer to the table above it
