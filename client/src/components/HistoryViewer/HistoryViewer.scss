@@ -27,6 +27,10 @@
 }
 
 .table .history-viewer__row--current {
+  &.history-viewer__table--compare {
+    margin-left: 0;
+    margin-right: 0;
+  }
   // There will only be one table row in this table state
   &, &:hover {
     background-color: $link-color;
@@ -47,8 +51,13 @@
   white-space: nowrap;
 }
 
-// Bring any CMS tabs in the detail view closer to the table above it
 .history-viewer__version-detail {
+  &.history-viewer__version-detail--compare {
+    margin-left: $form-check-input-gutter;
+    margin-right: $form-check-input-gutter;
+  }
+
+  // Bring any CMS tabs in the detail view closer to the table above it
   .nav-tabs {
     margin-top: -$panel-padding-y;
   }
