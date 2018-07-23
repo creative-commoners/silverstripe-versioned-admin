@@ -79,18 +79,22 @@ export default function historyViewerReducer(state = initialState, { type, paylo
     }
 
     case HISTORY_VIEWER.SET_COMPARE_FROM: {
-      let { compareFrom, compareTo } = state;
+      let { compareFrom, compareTo, currentVersion } = state;
       compareFrom = payload.version;
 
       if (!payload.version) {
         compareFrom = compareTo;
         compareTo = 0;
       }
+      else if (!currentVersion) {
+        currentVersion = compareFrom;
+      }
 
       return {
         ...state,
         compareFrom,
         compareTo,
+        currentVersion,
       };
     }
 
