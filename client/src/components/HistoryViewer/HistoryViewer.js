@@ -8,7 +8,11 @@ import historyViewerConfig from 'containers/HistoryViewer/HistoryViewerConfig';
 import i18n from 'i18n';
 import { inject } from 'lib/Injector';
 import Loading from 'components/Loading/Loading';
-import { setCurrentPage, showVersion } from 'state/historyviewer/HistoryViewerActions';
+import {
+  setCurrentPage,
+  showVersion,
+  clearMessages,
+} from 'state/historyviewer/HistoryViewerActions';
 import { versionType } from 'types/versionType';
 import { compareType } from 'types/compareType';
 import classNames from 'classnames';
@@ -157,6 +161,7 @@ class HistoryViewer extends Component {
       schemaUrl,
       VersionDetailComponent,
       compare,
+      compare: { versionFrom = false, versionTo = false },
       previewState,
     } = this.props;
 
@@ -164,18 +169,18 @@ class HistoryViewer extends Component {
     const schemaVersionReplacements = {
       ':id': recordId,
       ':class': recordClass,
-      ':version': currentVersion,
+      ':version': currentVersion.Version,
     };
     const schemaCompareReplacements = {
       ':id': recordId,
       ':class': recordClass,
-      ':from': compare ? compare.versionFrom : 0,
-      ':to': compare ? compare.versionTo : 0,
+      ':from': versionFrom.Version || 0,
+      ':to': versionTo.Version || 0,
     };
     const schemaSearch = compare ? /:id|:class|:from|:to/g : /:id|:class|:version/g;
     const schemaReplacements = compare ? schemaCompareReplacements : schemaVersionReplacements;
 
-    const filterVersions = (wantedID) => (potential => potential.Version === wantedID);
+    const filterVersions = (wantedID) => (potential => potential.Version === wantedID.Version);
 
     const version = this.getVersions().find(
       filterVersions(compare ? compare.versionFrom : currentVersion)
@@ -246,21 +251,43 @@ class HistoryViewer extends Component {
     );
   }
 
+  renderComparisonSelectionList() {
+    const { compare: { versionFrom }, ListComponent } = this.props;
+    if (!versionFrom) {
+      return null;
+    }
+    return (
+      <ListComponent
+        versions={[versionFrom]}
+        extraClass="history-viewer__table history-viewer__table--comparison-selected"
+      />
+    );
+  }
+
   /**
    * Renders a list of versions
    *
    * @returns {HistoryViewerVersionList}
    */
   renderVersionList() {
-    const { isPreviewable, ListComponent, CompareWarningComponent } = this.props;
+    const {
+      isPreviewable,
+      ListComponent,
+      CompareWarningComponent,
+      compare,
+      compare: { versionFrom: hasVersionFrom },
+    } = this.props;
 
 
     return (
       <div className={this.getContainerClasses()}>
         <CompareWarningComponent />
+
         <div className={isPreviewable ? 'panel panel--padded panel--scrollable' : ''}>
+          {this.renderComparisonSelectionList()}
           <ListComponent
             versions={this.getVersions()}
+            withHeader={!compare || (compare && !hasVersionFrom)}
           />
 
           <div className="history-viewer__pagination">
@@ -305,7 +332,7 @@ HistoryViewer.propTypes = {
   ListComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   offset: PropTypes.number,
   recordId: PropTypes.number.isRequired,
-  currentVersion: PropTypes.number,
+  currentVersion: PropTypes.oneOfType([PropTypes.bool, versionType]),
   compare: compareType,
   isPreviewable: PropTypes.bool,
   VersionDetailComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
@@ -331,7 +358,7 @@ HistoryViewer.propTypes = {
 
 HistoryViewer.defaultProps = {
   contextKey: '',
-  currentVersion: 0,
+  currentVersion: false,
   isPreviewable: false,
   schemaUrl: '',
   versions: {
@@ -366,6 +393,7 @@ function mapDispatchToProps(dispatch) {
   return {
     onSelect(id) {
       dispatch(showVersion(id));
+      dispatch(clearMessages());
     },
     onSetPage(page) {
       dispatch(setCurrentPage(page));
