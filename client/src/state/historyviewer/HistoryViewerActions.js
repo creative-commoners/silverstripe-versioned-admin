@@ -6,23 +6,18 @@ import uuidv1 from 'uuid/v1';
  * version in the viewer, i.e. a detail or comparison view
  *
  * @param {int} id
- * @returns {function}
+ * @returns {Object}
  */
-export function showVersion(id) {
-  return (dispatch) => {
-    dispatch({
-      type: HISTORY_VIEWER.SHOW_VERSION,
-      payload: { id },
-    });
-    dispatch({
-      type: HISTORY_VIEWER.CLEAR_MESSAGES,
-    });
+export function showVersion(version) {
+  return {
+    type: HISTORY_VIEWER.SHOW_VERSION,
+    payload: { version },
   };
 }
 
 /**
  * Return to list view
- * @returns {function}
+ * @returns {Object}
  */
 export function showList() {
   return {
@@ -34,7 +29,7 @@ export function showList() {
  * Set the current pagination page number for the list of history viewer versions
  *
  * @param {int} page
- * @returns {function}
+ * @returns {Object}
  */
 export function setCurrentPage(page) {
   return {
@@ -48,7 +43,7 @@ export function setCurrentPage(page) {
  *
  * @param {string} message
  * @param {string} type
- * @returns {function}
+ * @returns {Object}
  */
 export function addMessage(message, type = 'success') {
   return {
@@ -60,12 +55,11 @@ export function addMessage(message, type = 'success') {
 /**
  * Clear all status messages
  *
- * @returns {function}
+ * @returns {Object}
  */
 export function clearMessages() {
   return {
     type: HISTORY_VIEWER.CLEAR_MESSAGES,
-    payload: {},
   };
 }
 
@@ -73,7 +67,7 @@ export function clearMessages() {
  * Enables or disables the comparison mode
  *
  * @param {boolean} enabled
- * @returns {function}
+ * @returns {Object}
  */
 export function setCompareMode(enabled) {
   return {
@@ -86,7 +80,7 @@ export function setCompareMode(enabled) {
  * Sets the comparison mode 'from' a version
  *
  * @param {int} version
- * @returns {function}
+ * @returns {Object}
  */
 export function setCompareFrom(version) {
   return {
@@ -99,7 +93,7 @@ export function setCompareFrom(version) {
  * Sets the comparison mode 'to' a version
  *
  * @param {int} version
- * @returns {function}
+ * @returns {Object}
  */
 export function setCompareTo(version) {
   return {

@@ -15,8 +15,12 @@ class HistoryViewerVersionList extends PureComponent {
    * @returns {string}
    */
   getClassNames() {
-    const { extraClass } = this.props;
-    return classnames({ table: true }, extraClass);
+    const { extraClass, withHeader } = this.props;
+    const classes = {
+      table: true,
+      'history-viewer__table--headerless': !withHeader,
+    };
+    return classnames(classes, extraClass);
   }
 
   /**
@@ -28,12 +32,13 @@ class HistoryViewerVersionList extends PureComponent {
    * @returns {boolean}
    */
   isVersionActive(version) {
-    const { isActive, compare } = this.props;
-    if (isActive) {
-      return true;
-    }
+      const { currentVersion, compare, compare: { versionFrom, versionTo } } = this.props;
 
-    return version.Version === compare.versionFrom || version.Version === compare.versionTo;
+      const isCurrent = currentVersion && currentVersion.Version === version.Version;
+      const isCompareFrom = versionFrom && versionFrom.Version === version.Version;
+      const isCompareTo = versionTo && versionTo.Version === version.Version;
+
+      return (!compare && isCurrent) || isCompareFrom || isCompareTo;
   }
 
   /**
@@ -64,21 +69,26 @@ class HistoryViewerVersionList extends PureComponent {
     );
   }
 
+  renderHeader() {
+    const { withHeader, HeadingComponent } = this.props;
+    return withHeader ? <HeadingComponent /> : null;
+  }
+
   render() {
-    const { HeadingComponent, VersionComponent, versions } = this.props;
+    const { VersionComponent, versions, compare } = this.props;
 
     return (
       <div className="history-viewer__list">
         {this.renderMessages()}
-
         <ul className={this.getClassNames()}>
-          <HeadingComponent />
+          {this.renderHeader()}
           {
             versions.map((version) => (
               <VersionComponent
                 key={version.Version}
                 isActive={this.isVersionActive(version)}
                 version={version}
+                compare={compare}
               />
             ))
           }
@@ -90,27 +100,28 @@ class HistoryViewerVersionList extends PureComponent {
 
 HistoryViewerVersionList.propTypes = {
   extraClass: PropTypes.string,
+  withHeader: PropTypes.bool,
   FormAlertComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   HeadingComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
-  isActive: PropTypes.bool,
   messages: PropTypes.arrayOf(messageType),
   VersionComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   versions: PropTypes.arrayOf(versionType),
-  compare: compareType
+  compare: compareType,
 };
 
 HistoryViewerVersionList.defaultProps = {
   extraClass: 'history-viewer__table',
-  isActive: false,
   messages: [],
+  withHeader: true,
   versions: [],
 };
 
 function mapStateToProps(state) {
-  const { messages, compare } = state.versionedAdmin.historyViewer;
+  const { messages, compare, currentVersion } = state.versionedAdmin.historyViewer;
   return {
     messages,
-    compare
+    compare,
+    currentVersion,
   };
 }
 
