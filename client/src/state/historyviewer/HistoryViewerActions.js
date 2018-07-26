@@ -5,7 +5,7 @@ import uuidv1 from 'uuid/v1';
  * Setting the current version will enable context views for a specific record
  * version in the viewer, i.e. a detail or comparison view
  *
- * @param {int} id
+ * @param {Object} version
  * @returns {Object}
  */
 export function showVersion(version) {
@@ -79,7 +79,7 @@ export function setCompareMode(enabled) {
 /**
  * Sets the comparison mode 'from' a version
  *
- * @param {int} version
+ * @param {Object} version
  * @returns {Object}
  */
 export function setCompareFrom(version) {
@@ -92,7 +92,7 @@ export function setCompareFrom(version) {
 /**
  * Sets the comparison mode 'to' a version
  *
- * @param {int} version
+ * @param {Object} version
  * @returns {Object}
  */
 export function setCompareTo(version) {

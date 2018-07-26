@@ -10,7 +10,7 @@ import { compareType } from 'types/compareType';
 
 class HistoryViewerVersionList extends PureComponent {
   /**
-   * Return a string of HTML class names for the table element
+   * Return a string of HTML class names for the table (actually a list) element
    *
    * @returns {string}
    */
@@ -99,7 +99,7 @@ class HistoryViewerVersionList extends PureComponent {
 }
 
 HistoryViewerVersionList.propTypes = {
-  extraClass: PropTypes.string,
+  extraClass: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   showHeader: PropTypes.bool,
   FormAlertComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   HeadingComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
