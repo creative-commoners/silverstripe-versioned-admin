@@ -43,6 +43,21 @@ class HistoryViewerVersion extends Component {
   }
 
   /**
+   * Return a string of HTML class names for the row (list item) element
+   *
+   * @returns {string}
+   */
+  getClassNames() {
+    const { extraClass, isActive, compare } = this.props;
+    const defaultClasses = {
+      'history-viewer__row': true,
+      'history-viewer__row--current': isActive,
+      'history-viewer__row--comparison-selected': compare,
+    };
+    return classNames(defaultClasses, extraClass);
+  }
+
+  /**
    * When clicking on a version, render the detail view for it via a Redux action dispatch
    * passed through via a closure prop (onSelect)
    */
@@ -148,15 +163,10 @@ class HistoryViewerVersion extends Component {
   render() {
     const { version, isActive, StateComponent } = this.props;
 
-    const classnames = classNames({
-      'history-viewer__row': true,
-      'history-viewer__row--current': isActive,
-    });
-
     const rowTitle = i18n._t('HistoryViewerVersion.GO_TO_VERSION', 'Go to version {version}');
 
     return (
-      <li className={classnames}>
+      <li className={this.getClassNames()}>
         <a
           href={null}
           className="history-viewer__version-anchor"
@@ -177,10 +187,11 @@ class HistoryViewerVersion extends Component {
 }
 
 HistoryViewerVersion.propTypes = {
+  extraClass: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
   version: versionType,
-  isActive: React.PropTypes.bool,
-  onSelect: React.PropTypes.func,
-  onCompareMode: React.PropTypes.func,
+  isActive: PropTypes.bool,
+  onSelect: PropTypes.func,
+  onCompareMode: PropTypes.func,
   compare: compareType,
   StateComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   FormActionComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,

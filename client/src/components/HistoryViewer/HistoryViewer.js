@@ -180,29 +180,26 @@ class HistoryViewer extends Component {
     const schemaSearch = compare ? /:id|:class|:from|:to/g : /:id|:class|:version/g;
     const schemaReplacements = compare ? schemaCompareReplacements : schemaVersionReplacements;
 
-    const filterVersions = (wantedID) => (potential => potential.Version === wantedID.Version);
-
-    const version = this.getVersions().find(
-      filterVersions(compare ? compare.versionFrom : currentVersion)
-    );
+    const version = compare ? compare.versionFrom : currentVersion;
     const latestVersion = this.getLatestVersion();
-    const compareProps = compare ? {
-      versionFrom: this.getVersions().find(filterVersions(compare.versionFrom)),
-      versionTo: this.getVersions().find(filterVersions(compare.versionTo)),
-    } : false;
 
     const props = {
-      isLatestVersion: latestVersion && latestVersion.Version === version.Version,
+      // comparison shows two versions as one, so by nature cannot be a single 'latest' version.
+      isLatestVersion: !compare && latestVersion && latestVersion.Version === version.Version,
       isPreviewable,
       recordId,
       schemaUrl: schemaUrl.replace(schemaSearch, (match) => schemaReplacements[match]),
       version,
-      compare: compareProps,
+      compare,
       previewState,
     };
 
     return (
-      <ResizeAware style={{ position: 'relative' }} className={this.getContainerClasses()} onResize={({ width }) => this.props.onResize(width)} >
+      <ResizeAware
+        style={{ position: 'relative' }}
+        className={this.getContainerClasses()}
+        onResize={({ width }) => this.props.onResize(width)}
+      >
         <VersionDetailComponent {...props} />
       </ResizeAware>
     );
@@ -251,6 +248,14 @@ class HistoryViewer extends Component {
     );
   }
 
+  /**
+   * Render the list containing versions selected for comparison.
+   * It is not the ListComponent's place to know the context in which it is being rendered
+   * so it is the directive of this contextual component to tell it what stylistic adaptations
+   * it should present based on the context (the type of list it contains).
+   *
+   * @returns {HistoryViewerVersionList|null}
+   */
   renderComparisonSelectionList() {
     const { compare: { versionFrom }, ListComponent } = this.props;
     if (!versionFrom) {

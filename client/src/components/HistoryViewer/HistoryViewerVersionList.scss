@@ -13,9 +13,10 @@
   margin-bottom: 0;
   border-bottom: 5px solid $gray-800;
 
-  .history-viewer__row:last-child {
-    border-bottom: none;
-  }
+}
+
+.history-viewer__row--comparison-selected:last-child {
+  border-bottom: none;
 }
 
 .history-viewer__heading,
