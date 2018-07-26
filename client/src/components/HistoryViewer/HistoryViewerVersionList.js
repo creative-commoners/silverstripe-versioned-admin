@@ -15,10 +15,10 @@ class HistoryViewerVersionList extends PureComponent {
    * @returns {string}
    */
   getClassNames() {
-    const { extraClass, withHeader } = this.props;
+    const { extraClass, showHeader } = this.props;
     const classes = {
       table: true,
-      'history-viewer__table--headerless': !withHeader,
+      'history-viewer__table--headerless': !showHeader,
     };
     return classnames(classes, extraClass);
   }
@@ -70,8 +70,8 @@ class HistoryViewerVersionList extends PureComponent {
   }
 
   renderHeader() {
-    const { withHeader, HeadingComponent } = this.props;
-    return withHeader ? <HeadingComponent /> : null;
+    const { showHeader, HeadingComponent } = this.props;
+    return showHeader ? <HeadingComponent /> : null;
   }
 
   render() {
@@ -100,7 +100,7 @@ class HistoryViewerVersionList extends PureComponent {
 
 HistoryViewerVersionList.propTypes = {
   extraClass: PropTypes.string,
-  withHeader: PropTypes.bool,
+  showHeader: PropTypes.bool,
   FormAlertComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   HeadingComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   messages: PropTypes.arrayOf(messageType),
@@ -112,7 +112,7 @@ HistoryViewerVersionList.propTypes = {
 HistoryViewerVersionList.defaultProps = {
   extraClass: 'history-viewer__table',
   messages: [],
-  withHeader: true,
+  showHeader: true,
   versions: [],
 };
 
