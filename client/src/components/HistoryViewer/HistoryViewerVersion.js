@@ -48,11 +48,11 @@ class HistoryViewerVersion extends Component {
    * @returns {string}
    */
   getClassNames() {
-    const { extraClass, isActive, compare } = this.props;
+    const { extraClass, isActive, compare, compare: { compareFrom, compareTo } } = this.props;
     const defaultClasses = {
       'history-viewer__row': true,
       'history-viewer__row--current': isActive,
-      'history-viewer__row--comparison-selected': compare,
+      'history-viewer__row--comparison-selected': compare && !(compareFrom && compareTo),
     };
     return classNames(defaultClasses, extraClass);
   }
@@ -107,6 +107,7 @@ class HistoryViewerVersion extends Component {
       <FormActionComponent
         onClick={this.handleCompare}
         title={translatedText}
+        buttonStyle="outline-light"
         extraClass="history-viewer__compare-button"
       >
         {translatedText}
@@ -132,6 +133,7 @@ class HistoryViewerVersion extends Component {
         onClick={this.handleClose}
         icon="cancel"
         title={null}
+        buttonStyle="outline-light"
         extraClass="history-viewer__close-button"
       />
     );
@@ -200,6 +202,7 @@ HistoryViewerVersion.propTypes = {
 HistoryViewerVersion.defaultProps = {
   isActive: false,
   version: defaultVersion,
+  compare: false,
 };
 
 export { HistoryViewerVersion as Component };
