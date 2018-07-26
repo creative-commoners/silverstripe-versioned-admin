@@ -8,16 +8,6 @@
   }
 }
 
-// In compare mode, we don't want any space between the two version lists, only a small black line.
-.history-viewer__table--comparison-selected {
-  margin-bottom: 0;
-  border-bottom: 5px solid $gray-800;
-  
-  .history-viewer__row:last-child {
-    border-bottom: none;
-  }
-}
-
 // Used in conjunction with .panel--padded, removes top and bottom padding
 .panel--padded-side {
   padding-bottom: -1px;

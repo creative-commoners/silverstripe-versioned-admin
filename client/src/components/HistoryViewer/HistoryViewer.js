@@ -287,7 +287,7 @@ class HistoryViewer extends Component {
           {this.renderComparisonSelectionList()}
           <ListComponent
             versions={this.getVersions()}
-            withHeader={!compare || (compare && !hasVersionFrom)}
+            showHeader={!compare || (compare && !hasVersionFrom)}
           />
 
           <div className="history-viewer__pagination">

@@ -59,8 +59,8 @@ class HistoryViewerVersion extends Component {
   }
 
   handleCompare() {
-    const { enterCompareMode, version } = this.props;
-    enterCompareMode(version);
+    const { onCompareMode, version } = this.props;
+    onCompareMode(version);
   }
 
   /**
@@ -180,7 +180,7 @@ HistoryViewerVersion.propTypes = {
   version: versionType,
   isActive: React.PropTypes.bool,
   onSelect: React.PropTypes.func,
-  enterCompareMode: React.PropTypes.func,
+  onCompareMode: React.PropTypes.func,
   compare: compareType,
   StateComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   FormActionComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
@@ -208,7 +208,7 @@ function mapDispatchToProps(dispatch) {
         dispatch(clearMessages());
       }
     },
-    enterCompareMode(version) {
+    onCompareMode(version) {
       dispatch(setCompareFrom(version));
       dispatch(setCompareMode(true));
     }
