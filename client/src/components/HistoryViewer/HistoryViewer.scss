@@ -10,7 +10,7 @@
 
 // Used in conjunction with .panel--padded, removes top and bottom padding
 .panel--padded-side {
-  padding-bottom: 0;
+  padding-bottom: 0px;
   padding-top: 0;
 }
 
@@ -25,11 +25,6 @@
 .history-viewer__version-detail--compare {
   margin-left: $panel-padding-x;
   margin-right: $panel-padding-x;
-}
-
-// Bring any CMS tabs in the detail view closer to the table above it
-.history-viewer__version-detail .nav-tabs {
-  margin-top: -$panel-padding-y;
 }
 
 .history-viewer__compare-button {
