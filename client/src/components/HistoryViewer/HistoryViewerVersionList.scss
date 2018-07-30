@@ -71,7 +71,6 @@
 }
 
 .table .history-viewer__row--current {
-  // There will only be one table row in this table state
   &, &:hover {
     background-color: $link-color;
     color: $white;

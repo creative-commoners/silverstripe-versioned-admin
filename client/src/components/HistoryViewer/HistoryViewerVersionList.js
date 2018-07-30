@@ -10,7 +10,7 @@ import { compareType } from 'types/compareType';
 
 class HistoryViewerVersionList extends PureComponent {
   /**
-   * Return a string of HTML class names for the table (actually a list) element
+   * Return a string of HTML class names for the list element
    *
    * @returns {string}
    */
@@ -24,9 +24,19 @@ class HistoryViewerVersionList extends PureComponent {
   }
 
   /**
-   * "isActive" in this component indicates that the content is shown - ie. the table
-   * only shows the row (or rows) that are currently highlighted above the content of
-   * this version.
+   * Compares provided version object to see if it is one of the selected ones in the store.
+   * It can be that it is either currentVersion, the versionFrom or the versionTo comparison.
+   *
+   * We receive either a version object, or `false` as props for current/from/to
+   * If and only if we are NOT in compare mode:
+   * - compare is `false`
+   * - versionFrom and versionTo are `undefined`
+   * - currentVersion is relevant (otherwise it can be ignored, even if it is a valid version)
+   *
+   * @see {state/historyviewer/HistoryViewerReducer} for how compare is set
+   *
+   * Otherwise we simply check to see if the provided version object's version number
+   * is equal to one of the version numbers on the store objects.
    *
    * @param {Object} version
    * @returns {boolean}
@@ -69,6 +79,10 @@ class HistoryViewerVersionList extends PureComponent {
     );
   }
 
+  /**
+   * Renders a HeadingComponent at the top of the list, unless it has been disabled.
+   * @returns {HistoryViewerHeading|null}
+   */
   renderHeader() {
     const { showHeader, HeadingComponent } = this.props;
     return showHeader ? <HeadingComponent /> : null;

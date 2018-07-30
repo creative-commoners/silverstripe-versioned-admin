@@ -84,6 +84,7 @@ class HistoryViewerVersion extends Component {
   handleClose() {
     const { onSelect, version, compare, compare: { versionFrom } } = this.props;
     if (versionFrom && versionFrom.Version === version.Version) {
+      // Ensures we set the correct thing. C.f. logic in mapDispatchToProps -> onSelect
       delete compare.versionFrom;
     }
     onSelect(0, compare);
