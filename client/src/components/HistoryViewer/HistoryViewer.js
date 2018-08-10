@@ -291,6 +291,7 @@ class HistoryViewer extends Component {
       <ListComponent
         versions={[versionFrom]}
         extraClass="history-viewer__table history-viewer__table--comparison-selected"
+        comparisonSelectionList
       />
     );
   }

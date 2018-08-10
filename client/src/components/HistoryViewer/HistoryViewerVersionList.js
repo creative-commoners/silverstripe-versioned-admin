@@ -89,7 +89,7 @@ class HistoryViewerVersionList extends PureComponent {
   }
 
   render() {
-    const { VersionComponent, versions, compare } = this.props;
+    const { VersionComponent, versions, compare, comparisonSelectionList } = this.props;
 
     return (
       <div className="history-viewer__list">
@@ -103,6 +103,7 @@ class HistoryViewerVersionList extends PureComponent {
                 isActive={this.isVersionActive(version)}
                 version={version}
                 compare={compare}
+                inComparisonSelectionList={comparisonSelectionList}
               />
             ))
           }
@@ -121,6 +122,7 @@ HistoryViewerVersionList.propTypes = {
   VersionComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   versions: PropTypes.arrayOf(versionType),
   compare: compareType,
+  comparisonSelectionList: PropTypes.bool,
 };
 
 HistoryViewerVersionList.defaultProps = {
@@ -128,6 +130,7 @@ HistoryViewerVersionList.defaultProps = {
   messages: [],
   showHeader: true,
   versions: [],
+  comparisonSelectionList: false
 };
 
 function mapStateToProps(state) {

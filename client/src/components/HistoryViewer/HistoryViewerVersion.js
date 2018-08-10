@@ -22,6 +22,12 @@ class HistoryViewerVersion extends Component {
     this.handleClose = this.handleClose.bind(this);
     this.handleCompare = this.handleCompare.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.handleMouseEnter = this.handleMouseEnter.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+
+    this.state = {
+      clearButtonHoveredInCompareMode: false,
+    };
   }
 
   /**
@@ -102,6 +108,14 @@ class HistoryViewerVersion extends Component {
     onSelect(0, compare);
   }
 
+  handleMouseEnter() {
+    this.setState({ clearButtonHoveredInCompareMode: true, });
+  }
+
+  handleMouseLeave() {
+    this.setState({ clearButtonHoveredInCompareMode: false, });
+  }
+
   /**
    * Renders a "compare mode" button which will allow the user to start selecting versions to
    * compare differences between. This is usually rendered in the "more actions" menu.
@@ -135,15 +149,28 @@ class HistoryViewerVersion extends Component {
    * @returns {FormAction|null}
    */
   renderClearButton() {
-    const { FormActionComponent, isActive } = this.props;
+    const { FormActionComponent, isActive, compare, inComparisonSelectionList } = this.props;
+    const { clearButtonHoveredInCompareMode } = this.state;
 
     if (!isActive) {
       return null;
     }
 
+    if (!clearButtonHoveredInCompareMode && compare && !inComparisonSelectionList) {
+      return (
+        <span
+          className="history-viewer__actions-selected"
+          onMouseEnter={this.handleMouseEnter}
+        >
+          {i18n._t('HistoryViewerVersion.SELECTED', 'Already selected')}
+        </span>
+      );
+    }
+
     return (
       <FormActionComponent
         onClick={this.handleClose}
+        onMouseLeave={this.handleMouseLeave}
         icon="cancel"
         // Provide the title as an attribute to prevent it from rendering as text on the button
         attributes={{
@@ -180,16 +207,20 @@ class HistoryViewerVersion extends Component {
   }
 
   render() {
-    const { version, isActive, StateComponent } = this.props;
+    const { version, isActive, StateComponent, compare } = this.props;
 
     const rowTitle = i18n._t('HistoryViewerVersion.GO_TO_VERSION', 'Go to version {version}');
+    let title = '';
 
+    if (!compare) {
+      title = i18n.inject(rowTitle, { version: version.Version });
+    }
     return (
       <li className={this.getClassNames()} role="row">
         <span
           className="history-viewer__version-link"
           role="button"
-          title={i18n.inject(rowTitle, { version: version.Version })}
+          title={title}
           onClick={this.handleClick}
           onKeyUp={this.handleKeyUp}
           tabIndex={0}
@@ -220,12 +251,14 @@ HistoryViewerVersion.propTypes = {
   compare: compareType,
   StateComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   FormActionComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
+  inComparisonSelectionList: PropTypes.bool,
 };
 
 HistoryViewerVersion.defaultProps = {
   isActive: false,
   version: defaultVersion,
   compare: false,
+  inComparisonSelectionList: false,
 };
 
 export { HistoryViewerVersion as Component };
