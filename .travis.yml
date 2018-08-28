@@ -12,6 +12,7 @@ env:
     - XVFBARGS=":99 -ac -screen 0 1024x768x16"
     - SS_BASE_URL="http://localhost:8080/"
     - SS_ENVIRONMENT_TYPE="dev"
+    - SERVE_BOOTSTRAP_FILE="vendor/silverstripe/cms/tests/behat/serve-bootstrap.php"
 
 matrix:
   include:
@@ -48,8 +49,6 @@ before_script:
   - if [[ $BEHAT_TEST ]]; then mkdir artifacts; fi
   - if [[ $BEHAT_TEST ]]; then cp composer.lock artifacts/; fi
   - if [[ $BEHAT_TEST ]]; then sh -e /etc/init.d/xvfb start; sleep 3; fi
-  - if [[ $BEHAT_TEST ]]; then (chromedriver > artifacts/chromedriver.log 2>&1 &); fi
-  - if [[ $BEHAT_TEST ]]; then (vendor/bin/serve --bootstrap-file vendor/silverstripe/cms/tests/behat/serve-bootstrap.php &> artifacts/serve.log &); fi
 
   # Install NPM dependencies
   - if [[ $NPM_TEST ]]; then nvm install $TRAVIS_NODE_VERSION && nvm use $TRAVIS_NODE_VERSION && npm install -g yarn && yarn install --network-concurrency 1 && (cd vendor/silverstripe/admin && yarn install --network-concurrency 1) && yarn run build; fi
@@ -61,7 +60,7 @@ script:
   - if [[ $NPM_TEST ]]; then git diff --name-status --relative=client; fi
   - if [[ $NPM_TEST ]]; then yarn run test; fi
   - if [[ $NPM_TEST ]]; then yarn run lint; fi
-  - if [[ $BEHAT_TEST ]]; then vendor/bin/behat @versioned-admin; fi
+  - if [[ $BEHAT_TEST ]]; then vendor/bin/behat-ss @versioned-admin; fi
   - if [[ $PHPUNIT_COVERAGE_TEST ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=coverage.xml; fi
 
 after_success:
